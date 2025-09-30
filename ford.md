@@ -12,6 +12,7 @@ exclude_dir: ./build
 page_dir: ./pages
 media_dir: ./media
 css: ./media/ford_custom.css
+favicon: ./media/favicon.png
 docmark_alt: @
 predocmark: >
 display: public
