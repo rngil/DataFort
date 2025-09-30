@@ -94,9 +94,9 @@ jobs:
         # Check if any files would be reformatted
         CHANGED=0
         for file in $(find src test app -type f \( -name "*.f90" -o -name "*.F90" \) 2>/dev/null); do
-          if ! fprettify --config-file .fprettify.rc --diff "$file" | grep -q "^$"; then
+          if ! fprettify --config-file .fprettify.rc --case 1 1 1 1 --diff "$file" | grep -q "^$"; then
             echo "File $file needs formatting"
-            fprettify --config-file .fprettify.rc --diff "$file"
+            fprettify --config-file .fprettify.rc --case 1 1 1 1 --diff "$file"
             CHANGED=1
           fi
         done
