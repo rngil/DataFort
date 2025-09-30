@@ -28,8 +28,8 @@ program test_advanced
     scores = [85.5_rk, 92.3_rk, 78.0_rk, 92.3_rk, 88.5_rk, &
               85.5_rk, 90.0_rk, 78.0_rk, 95.2_rk, 88.5_rk]
     grades = [3_ik, 4_ik, 2_ik, 4_ik, 3_ik, 3_ik, 4_ik, 2_ik, 4_ik, 3_ik]
-    names = ["Alice     ", "Bob       ", "Charlie   ", "Bob       ", "Diana     ", &
-             "Alice     ", "Eve       ", "Charlie   ", "Frank     ", "Diana     "]
+    names = ["Alice", "Bob", "Charlie", "Bob", "Diana", &
+             "Alice", "Eve", "Charlie", "Frank", "Diana"]
 
     call df%new()
     call df%append(names, "Name")
@@ -106,7 +106,7 @@ program test_advanced
 
     more_scores = [82.0_rk, 91.5_rk, 87.3_rk]
     more_grades = [3_ik, 4_ik, 3_ik]
-    more_names = ["Grace     ", "Henry     ", "Iris      "]
+    more_names = ["Grace", "Henry", "Iris"]
 
     call df2%new()
     call df2%append(more_names, "Name")
@@ -137,7 +137,7 @@ program test_advanced
     write(*,'(a)') "Test 7: Merge"
     write(*,'(a)') "-------------"
 
-    student_names = ["Alice     ", "Bob       ", "Charlie   ", "Diana     "]
+    student_names = ["Alice", "Bob", "Charlie", "Diana"]
     student_ids = [1_ik, 2_ik, 3_ik, 4_ik]
 
     call students%new()
@@ -145,7 +145,7 @@ program test_advanced
     call students%append(student_names, "Name")
 
     course_student_ids = [1_ik, 2_ik, 1_ik, 3_ik]
-    course_names = ["Math      ", "Math      ", "Physics   ", "Math      "]
+    course_names = ["Math", "Math", "Physics", "Math"]
     course_scores = [90.0_rk, 85.0_rk, 88.0_rk, 92.0_rk]
 
     call courses%new()

@@ -2,13 +2,13 @@
 !!
 !! Defines precision parameters and NaN (Not-a-Number) constants for the library
 module precision
-    use,intrinsic :: iso_fortran_env,only: r64=>real64, i32=>int32
-    use,intrinsic :: ieee_arithmetic
+    use, intrinsic :: iso_fortran_env, only: r64 => real64, i32 => int32
+    use, intrinsic :: ieee_arithmetic
     implicit none
 
     ! Define kind parameters
-    integer,parameter :: rk = r64,      &
-                         ik = i32
+    integer, parameter :: rk = r64, &
+                          ik = i32
 
     ! NaN sentinel value for integers (use extreme negative value)
     integer(ik), parameter :: NaN_ik = -huge(0_ik) - 1_ik

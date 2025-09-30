@@ -8,13 +8,13 @@ program check
 
     print *, "Simple DataFort check..."
 
-    call df%new()
-    call df%append(temps, "Temperature")
+    call df % new()
+    call df % append(temps, "Temperature")
 
-    print *, "Data frame created with", df%ncols(), "columns and", df%nrows(), "rows"
-    print *, "Average temperature:", df%mean_real(1)
+    print *, "Data frame created with", df % ncols(), "columns and", df % nrows(), "rows"
+    print *, "Average temperature:", df % mean_real(1)
 
-    call df%destroy()
+    call df % destroy()
     print *, "Check completed successfully!"
 
 end program check

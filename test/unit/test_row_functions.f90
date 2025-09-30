@@ -12,36 +12,36 @@ program test_row_functions
     integer :: i
 
     ! Create dataframe
-    call df%new()
-    call df%append(col1, "A")
-    call df%append(col2, "B")
-    call df%append(col3, "C")
+    call df % new()
+    call df % append(col1, "A")
+    call df % append(col2, "B")
+    call df % append(col3, "C")
 
-    print*, "Original DataFrame:"
-    call df%write_console()
-    print*
+    print *, "Original DataFrame:"
+    call df % write_console()
+    print *
 
     ! Apply function to single row
-    print*, "Row 3 sum:", df%apply_to_row_real(3, row_sum)
-    print*, "Row 3 mean:", df%apply_to_row_real(3, row_mean)
-    print*, "Row 3 max:", df%apply_to_row_real(3, row_max)
-    print*
+    print *, "Row 3 sum:", df % apply_to_row_real(3, row_sum)
+    print *, "Row 3 mean:", df % apply_to_row_real(3, row_mean)
+    print *, "Row 3 max:", df % apply_to_row_real(3, row_max)
+    print *
 
     ! Apply function to all rows
-    print*, "All row sums:"
-    all_results = df%apply_to_all_rows_real(row_sum)
+    print *, "All row sums:"
+    all_results = df % apply_to_all_rows_real(row_sum)
     do i = 1, size(all_results)
-        print*, "  Row", i, ":", all_results(i)
+        print *, "  Row", i, ":", all_results(i)
     end do
-    print*
+    print *
 
-    print*, "All row means:"
-    all_results = df%apply_to_all_rows_real(row_mean)
+    print *, "All row means:"
+    all_results = df % apply_to_all_rows_real(row_mean)
     do i = 1, size(all_results)
-        print*, "  Row", i, ":", all_results(i)
+        print *, "  Row", i, ":", all_results(i)
     end do
 
-    call df%destroy()
+    call df % destroy()
 
 contains
 

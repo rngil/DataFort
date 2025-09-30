@@ -4,6 +4,11 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'ford.md'
+      - 'media/**'
+      - 'pages/**'
+      - 'docs/**'
   workflow_dispatch:
 
 permissions:
