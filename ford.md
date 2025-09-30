@@ -60,14 +60,6 @@ DataFort is a dataframes library for Fortran, providing pandas-like functionalit
 DataFort = { git = "https://github.com/rngil/DataFort" }
 ```
 
-### Manual
-
-```bash
-git clone https://github.com/rngil/DataFort
-cd DataFort
-./run_all_tests.sh  # Run test suite
-```
-
 --- 
 ## Quick Start
 --- 
