@@ -8,7 +8,7 @@ line-length = 120
 
 # Case handling
 # keywords, procedures, operators, intrinsics (1=lower, 2=upper, 3=capitalize)
-case = 1 1 1 1
+case = 1, 1, 1, 1
 
 # Disable auto-align (can be messy with complex code)
 disable-auto-align = true
