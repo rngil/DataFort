@@ -41,8 +41,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 # DataFort Guide
 
-Comprehensive guide with practical examples for common data manipulation tasks.
-
 ---
 
 ## Reading and Writing Data

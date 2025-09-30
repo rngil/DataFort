@@ -105,38 +105,38 @@ body:has(#guide-sidebar) #text {
   float: none;
 }
 
-/* Improve readability of guide content */
-#text h2 {
+/* Improve readability - only apply to pages with guide sidebar (documentation pages) */
+body:has(#guide-sidebar) #text h2 {
   margin-top: 2.5em;
   margin-bottom: 1em;
 }
 
-#text h3 {
+body:has(#guide-sidebar) #text h3 {
   margin-top: 2em;
   margin-bottom: 0.8em;
 }
 
-#text h4 {
+body:has(#guide-sidebar) #text h4 {
   margin-top: 1.5em;
   margin-bottom: 0.6em;
 }
 
-#text p {
+body:has(#guide-sidebar) #text p {
   line-height: 1.6;
   margin-bottom: 1em;
 }
 
-#text pre {
+body:has(#guide-sidebar) #text pre {
   margin: 1.5em 0;
   padding: 1em;
   line-height: 1.5;
 }
 
-#text .codehilite {
+body:has(#guide-sidebar) #text .codehilite {
   margin: 1.5em 0;
 }
 
-#text .codehilite pre {
+body:has(#guide-sidebar) #text .codehilite pre {
   padding: 1.2em;
   line-height: 1.6;
 }

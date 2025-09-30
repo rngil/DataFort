@@ -47,7 +47,10 @@ DataFort is a dataframes library for Fortran, providing pandas-like functionalit
   <strong>⚠️ Warning:</strong> Project is very much a WIP. Use at your own risk.
 </div>
 
+
+--- 
 ## Installation
+---
 
 ### Using fpm
 
@@ -64,7 +67,9 @@ cd DataFort
 ./run_all_tests.sh  # Run test suite
 ```
 
+--- 
 ## Quick Start
+--- 
 
 ```fortran
 program example
@@ -95,7 +100,9 @@ program example
 end program example
 ```
 
+--- 
 ## Development
+--- 
 
 ```bash
 make help      # Show all available commands
@@ -106,6 +113,8 @@ make format    # Format code
 make clean     # Clean build artifacts
 ```
 
+--- 
 ## Acknowledgments
+--- 
 
 DataFort is built upon the initial work from [fortranDF](https://github.com/jaiken17/fortranDF) by Joshua Aiken. While the project has been significantly extended and refactored with new features, the original skeleton provided a valuable foundation.
