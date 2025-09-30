@@ -34,11 +34,21 @@ jobs:
         which gfortran
         gfortran --version
 
+    - name: Install fpm
+      run: |
+        if [ "$RUNNER_OS" == "Linux" ]; then
+          wget https://github.com/fortran-lang/fpm/releases/download/v0.10.0/fpm-0.10.0-linux-x86_64 -O fpm
+        else
+          wget https://github.com/fortran-lang/fpm/releases/download/v0.10.0/fpm-0.10.0-macos-x86_64 -O fpm
+        fi
+        chmod +x fpm
+        sudo mv fpm /usr/local/bin/
+
     - name: Build library
-      run: make build
+      run: fpm build
 
     - name: Run tests
-      run: make test
+      run: fpm test
 
   docs:
     runs-on: ubuntu-latest
@@ -56,7 +66,7 @@ jobs:
         pip install ford
 
     - name: Generate documentation
-      run: make docs
+      run: ford ford.md
 
     - name: Upload documentation
       uses: actions/upload-artifact@v4
@@ -83,7 +93,7 @@ jobs:
       run: |
         # Check if any files would be reformatted
         CHANGED=0
-        for file in $(find src test examples -type f \( -name "*.f90" -o -name "*.F90" \) 2>/dev/null); do
+        for file in $(find src test app -type f \( -name "*.f90" -o -name "*.F90" \) 2>/dev/null); do
           if ! fprettify --diff "$file" | grep -q "^$"; then
             echo "File $file needs formatting"
             fprettify --diff "$file"
@@ -91,7 +101,7 @@ jobs:
           fi
         done
         if [ $CHANGED -eq 1 ]; then
-          echo "Some files need formatting. Run 'make format' locally."
+          echo "Some files need formatting. Run 'fprettify' locally."
           exit 1
         fi
         echo "All files are properly formatted."
