@@ -100,7 +100,7 @@ format:
 		exit 1; \
 	fi
 	@COUNT=0; \
-	for file in $$(find src test examples -type f \( -name "*.f90" -o -name "*.F90" \) 2>/dev/null); do \
+	for file in $$(find src test -type f \( -name "*.f90" -o -name "*.F90" \) 2>/dev/null); do \
 		echo "Formatting: $$file"; \
 		fprettify --config-file .fprettify.rc --indent 4 --line-length 120 $$file; \
 		COUNT=$$((COUNT + 1)); \
