@@ -18,7 +18,9 @@ program test_advanced
     real(rk), dimension(:), allocatable :: unique_scores
     integer(ik), dimension(:), allocatable :: unique_grades
     character(len=:), allocatable :: unique_names(:)
-    integer :: i
+    integer :: i, num_failed
+
+    num_failed = 0
 
     write(*,'(a)') ""
     write(*,'(a)') "Testing Advanced Data Operations"
@@ -28,8 +30,8 @@ program test_advanced
     scores = [85.5_rk, 92.3_rk, 78.0_rk, 92.3_rk, 88.5_rk, &
               85.5_rk, 90.0_rk, 78.0_rk, 95.2_rk, 88.5_rk]
     grades = [3_ik, 4_ik, 2_ik, 4_ik, 3_ik, 3_ik, 4_ik, 2_ik, 4_ik, 3_ik]
-    names = ["Alice", "Bob", "Charlie", "Bob", "Diana", &
-             "Alice", "Eve", "Charlie", "Frank", "Diana"]
+    names = ["Alice  ", "Bob    ", "Charlie", "Bob    ", "Diana  ", &
+             "Alice  ", "Eve    ", "Charlie", "Frank  ", "Diana  "]
 
     call df%new()
     call df%append(names, "Name")
@@ -49,12 +51,14 @@ program test_advanced
     do i = 1, size(unique_scores)
         write(*,'(a,f8.2)') "  ", unique_scores(i)
     end do
+    call assert_int_equal(size(unique_scores), 6, "unique_real count", num_failed)
 
     unique_grades = df%unique_integer(3)
     write(*,'(a)') "Unique grades:"
     do i = 1, size(unique_grades)
         write(*,'(a,i0)') "  ", unique_grades(i)
     end do
+    call assert_int_equal(size(unique_grades), 3, "unique_integer count", num_failed)
 
     ! Test value_counts()
     write(*,'(a)') ""
@@ -63,6 +67,8 @@ program test_advanced
     counts = df%value_counts_integer(3)
     write(*,'(a)') "Grade value counts:"
     call counts%write_console()
+    call assert_int_equal(counts%nrows(), 3, "value_counts rows", num_failed)
+    call assert_int_equal(counts%ncols(), 2, "value_counts cols", num_failed)
 
     ! Test duplicated() and drop_duplicates()
     write(*,'(a)') ""
@@ -75,12 +81,14 @@ program test_advanced
             write(*,'(a,i0)') "  Row ", i
         end if
     end do
+    call assert_int_equal(count(dup_mask), 4, "duplicated count", num_failed)
 
     result = df%drop_duplicates()
     write(*,'(a)') ""
     write(*,'(a)') "After drop_duplicates():"
     call result%write_console()
     write(*,'(a,i0,a,i0)') "Kept ", result%nrows(), " unique rows out of ", df%nrows()
+    call assert_int_equal(result%nrows(), 6, "drop_duplicates result rows", num_failed)
 
     ! Test drop_duplicates with subset
     write(*,'(a)') ""
@@ -88,6 +96,7 @@ program test_advanced
     result = df%drop_duplicates_subset([1])  ! Column 1 is Name
     call result%write_console()
     write(*,'(a,i0,a,i0)') "Kept ", result%nrows(), " unique names out of ", df%nrows()
+    call assert_int_equal(result%nrows(), 6, "drop_duplicates_subset result rows", num_failed)
 
     ! Test rank()
     write(*,'(a)') ""
@@ -98,6 +107,9 @@ program test_advanced
     do i = 1, min(10, size(ranks))
         write(*,'(a,i0,a,f8.2,a,i0)') "  Row ", i, ": Score ", scores(i), " -> Rank ", ranks(i)
     end do
+    call assert_int_equal(size(ranks), 10, "rank result size", num_failed)
+    ! Lowest score (78.0) should have rank 1 or 2
+    call assert_true(ranks(3) <= 2, "rank for low score", num_failed)
 
     ! Test concat() - vertical
     write(*,'(a)') ""
@@ -106,7 +118,7 @@ program test_advanced
 
     more_scores = [82.0_rk, 91.5_rk, 87.3_rk]
     more_grades = [3_ik, 4_ik, 3_ik]
-    more_names = ["Grace", "Henry", "Iris"]
+    more_names = ["Grace", "Henry", "Iris "]
 
     call df2%new()
     call df2%append(more_names, "Name")
@@ -116,6 +128,8 @@ program test_advanced
     result = df%concat(df2, 0)
     write(*,'(a)') "Combined dataframe (vertical stack):"
     call result%write_console()
+    call assert_int_equal(result%nrows(), 13, "concat vertical rows", num_failed)
+    call assert_int_equal(result%ncols(), 3, "concat vertical cols", num_failed)
 
     ! Test concat() - horizontal
     write(*,'(a)') ""
@@ -131,13 +145,15 @@ program test_advanced
     result = df%concat(df2, 1)
     write(*,'(a)') "Dataframe with additional column:"
     call result%write_console()
+    call assert_int_equal(result%nrows(), 10, "concat horizontal rows", num_failed)
+    call assert_int_equal(result%ncols(), 4, "concat horizontal cols", num_failed)
 
     ! Test merge()
     write(*,'(a)') ""
     write(*,'(a)') "Test 7: Merge"
     write(*,'(a)') "-------------"
 
-    student_names = ["Alice", "Bob", "Charlie", "Diana"]
+    student_names = ["Alice  ", "Bob    ", "Charlie", "Diana  "]
     student_ids = [1_ik, 2_ik, 3_ik, 4_ik]
 
     call students%new()
@@ -145,7 +161,7 @@ program test_advanced
     call students%append(student_names, "Name")
 
     course_student_ids = [1_ik, 2_ik, 1_ik, 3_ik]
-    course_names = ["Math", "Math", "Physics", "Math"]
+    course_names = ["Math   ", "Math   ", "Physics", "Math   "]
     course_scores = [90.0_rk, 85.0_rk, 88.0_rk, 92.0_rk]
 
     call courses%new()
@@ -163,6 +179,8 @@ program test_advanced
     write(*,'(a)') ""
     write(*,'(a)') "Merged (inner join on ID):"
     call result%write_console()
+    call assert_int_equal(result%nrows(), 4, "merge result rows", num_failed)
+    call assert_int_equal(result%ncols(), 5, "merge result cols", num_failed)
 
     ! Clean up
     call df%destroy()
@@ -173,7 +191,41 @@ program test_advanced
     call courses%destroy()
 
     write(*,'(a)') ""
-    write(*,'(a)') "All advanced operation tests completed!"
+    write(*,'(a)') "================================="
+    if (num_failed == 0) then
+        write(*,'(a)') "All tests PASSED!"
+    else
+        write(*,'(a,i0,a)') "FAILED: ", num_failed, " test(s) failed"
+        error stop 1
+    end if
     write(*,'(a)') ""
+
+contains
+
+    subroutine assert_int_equal(actual, expected, test_name, num_failed)
+        integer, intent(in) :: actual, expected
+        character(len=*), intent(in) :: test_name
+        integer, intent(inout) :: num_failed
+
+        if (actual == expected) then
+            write(*,'(a,a)') "   PASS: ", trim(test_name)
+        else
+            write(*,'(a,a,a,i0,a,i0)') "   FAIL: ", trim(test_name), " - Got ", actual, " Expected ", expected
+            num_failed = num_failed + 1
+        end if
+    end subroutine assert_int_equal
+
+    subroutine assert_true(condition, test_name, num_failed)
+        logical, intent(in) :: condition
+        character(len=*), intent(in) :: test_name
+        integer, intent(inout) :: num_failed
+
+        if (condition) then
+            write(*,'(a,a)') "   PASS: ", trim(test_name)
+        else
+            write(*,'(a,a)') "   FAIL: ", trim(test_name)
+            num_failed = num_failed + 1
+        end if
+    end subroutine assert_true
 
 end program test_advanced

@@ -146,6 +146,7 @@ module datafort
         procedure, public :: round_column
         procedure, public :: log_column, exp_column, sqrt_column
         procedure, public :: pow_column
+        procedure, public :: apply_to_column
 
         ! I/O operations
         procedure, public :: write_csv
@@ -219,6 +220,15 @@ module datafort
             integer, intent(in) :: num_cols
             real(rk) :: output
         end function row_func_real
+    end interface
+
+    ! Abstract interface for apply function
+    abstract interface
+        pure function transform_func(x) result(y)
+            import :: rk
+            real(rk), intent(in) :: x
+            real(rk) :: y
+        end function transform_func
     end interface
 
 contains
@@ -2572,6 +2582,22 @@ contains
         col = col**power
         call this % setr(col_index, col)
     end subroutine pow_column
+
+    ! Apply custom function to column
+    subroutine apply_to_column(this, col_index, func)
+        class(data_frame), intent(inout) :: this
+        integer, intent(in) :: col_index
+        procedure(transform_func) :: func
+
+        real(rk), dimension(:), allocatable :: col
+        integer :: i
+
+        col = this % getr(col_index)
+        do i = 1, size(col)
+            col(i) = func(col(i))
+        end do
+        call this % setr(col_index, col)
+    end subroutine apply_to_column
 
     ! ========================================================================
     ! CONVENIENCE FUNCTIONS
