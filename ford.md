@@ -45,7 +45,7 @@ incl_src: false
 DataFort is a dataframes library for Fortran, providing pandas-like functionality for scientific computing and data analysis.
 
 <div style="background-color: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 20px 0; border-radius: 4px;">
-  <strong>⚠️ Warning:</strong> Project is very much a WIP. Use at your own risk.
+  <strong>⚠️ Warning:</strong> Project is very much a WIP. Don't use in production.
 </div>
 
 
