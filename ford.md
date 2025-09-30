@@ -35,6 +35,16 @@ incl_src: false
 ---
 ---
 
+<div id="guide-sidebar">
+  <h4>Quick Links</h4>
+  <ul>
+    <li><a href="#installation">Installation</a></li>
+    <li><a href="#quick-start">Quick Start</a></li>
+    <li><a href="#development">Development</a></li>
+    <li><a href="#acknowledgments">Acknowledgments</a></li>
+  </ul>
+</div>
+
 <p align="center" style="margin: 0; padding: 0;">
   <img src="media/logo.png" alt="DataFort logo" width="100" style="vertical-align:middle; margin-right: 10px;"/> <span style="font-size:3.5em; font-weight:bold; vertical-align:middle;">DataFort</span>
 </p>

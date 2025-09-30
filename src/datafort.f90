@@ -2029,48 +2029,104 @@ contains
         integer, dimension(:), intent(inout) :: indices
         logical, intent(in) :: ascending
 
-        ! Simple bubble sort (could be improved with quicksort)
-        integer :: i, j, temp_idx
-        logical :: swapped
-
-        do i = 1, size(values) - 1
-            swapped = .false.
-            do j = 1, size(values) - i
-                if ((ascending .and. values(indices(j)) > values(indices(j+1))) .or. &
-                    (.not. ascending .and. values(indices(j)) < values(indices(j+1)))) then
-                    temp_idx = indices(j)
-                    indices(j) = indices(j+1)
-                    indices(j+1) = temp_idx
-                    swapped = .true.
-                end if
-            end do
-            if (.not. swapped) exit
-        end do
+        if (size(values) > 0) then
+            call quicksort_indices_real(values, indices, 1, size(values), ascending)
+        end if
     end subroutine sort_indices_real
+
+    recursive subroutine quicksort_indices_real(values, indices, low, high, ascending)
+        real(rk), dimension(:), intent(in) :: values
+        integer, dimension(:), intent(inout) :: indices
+        integer, intent(in) :: low, high
+        logical, intent(in) :: ascending
+        integer :: pivot_idx
+
+        if (low < high) then
+            pivot_idx = partition_indices_real(values, indices, low, high, ascending)
+            call quicksort_indices_real(values, indices, low, pivot_idx - 1, ascending)
+            call quicksort_indices_real(values, indices, pivot_idx + 1, high, ascending)
+        end if
+    end subroutine quicksort_indices_real
+
+    function partition_indices_real(values, indices, low, high, ascending) result(pivot_idx)
+        real(rk), dimension(:), intent(in) :: values
+        integer, dimension(:), intent(inout) :: indices
+        integer, intent(in) :: low, high
+        logical, intent(in) :: ascending
+        integer :: pivot_idx
+        real(rk) :: pivot
+        integer :: i, j, temp
+
+        pivot = values(indices(high))
+        i = low - 1
+
+        do j = low, high - 1
+            if ((ascending .and. values(indices(j)) <= pivot) .or. &
+                (.not. ascending .and. values(indices(j)) >= pivot)) then
+                i = i + 1
+                temp = indices(i)
+                indices(i) = indices(j)
+                indices(j) = temp
+            end if
+        end do
+
+        temp = indices(i + 1)
+        indices(i + 1) = indices(high)
+        indices(high) = temp
+        pivot_idx = i + 1
+    end function partition_indices_real
 
     subroutine sort_indices_integer(values, indices, ascending)
         integer(ik), dimension(:), intent(in) :: values
         integer, dimension(:), intent(inout) :: indices
         logical, intent(in) :: ascending
 
-        ! Simple bubble sort (could be improved with quicksort)
-        integer :: i, j, temp_idx
-        logical :: swapped
-
-        do i = 1, size(values) - 1
-            swapped = .false.
-            do j = 1, size(values) - i
-                if ((ascending .and. values(indices(j)) > values(indices(j+1))) .or. &
-                    (.not. ascending .and. values(indices(j)) < values(indices(j+1)))) then
-                    temp_idx = indices(j)
-                    indices(j) = indices(j+1)
-                    indices(j+1) = temp_idx
-                    swapped = .true.
-                end if
-            end do
-            if (.not. swapped) exit
-        end do
+        if (size(values) > 0) then
+            call quicksort_indices_integer(values, indices, 1, size(values), ascending)
+        end if
     end subroutine sort_indices_integer
+
+    recursive subroutine quicksort_indices_integer(values, indices, low, high, ascending)
+        integer(ik), dimension(:), intent(in) :: values
+        integer, dimension(:), intent(inout) :: indices
+        integer, intent(in) :: low, high
+        logical, intent(in) :: ascending
+        integer :: pivot_idx
+
+        if (low < high) then
+            pivot_idx = partition_indices_integer(values, indices, low, high, ascending)
+            call quicksort_indices_integer(values, indices, low, pivot_idx - 1, ascending)
+            call quicksort_indices_integer(values, indices, pivot_idx + 1, high, ascending)
+        end if
+    end subroutine quicksort_indices_integer
+
+    function partition_indices_integer(values, indices, low, high, ascending) result(pivot_idx)
+        integer(ik), dimension(:), intent(in) :: values
+        integer, dimension(:), intent(inout) :: indices
+        integer, intent(in) :: low, high
+        logical, intent(in) :: ascending
+        integer :: pivot_idx
+        integer(ik) :: pivot
+        integer :: i, j, temp
+
+        pivot = values(indices(high))
+        i = low - 1
+
+        do j = low, high - 1
+            if ((ascending .and. values(indices(j)) <= pivot) .or. &
+                (.not. ascending .and. values(indices(j)) >= pivot)) then
+                i = i + 1
+                temp = indices(i)
+                indices(i) = indices(j)
+                indices(j) = temp
+            end if
+        end do
+
+        temp = indices(i + 1)
+        indices(i + 1) = indices(high)
+        indices(high) = temp
+        pivot_idx = i + 1
+    end function partition_indices_integer
 
     subroutine reorder_all_columns(this, indices)
         class(data_frame), intent(inout) :: this
