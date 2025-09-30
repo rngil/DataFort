@@ -1,0 +1,7 @@
+Temperature,Humidity,Pressure,Sunny,Location,Category
+15.8,80,1012,F,Seattle,Cold
+22.3,65,1015,T,Portland,Warm
+18.7,75,1013,F,Vancouver,Mild
+25.1,55,1018,T,Sacramento,Warm
+12.4,85,1010,F,Anchorage,Cold
+28.9,45,1020,T,Phoenix,Hot

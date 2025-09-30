@@ -1,0 +1,152 @@
+/* Hide jumbotron and developer info box */
+#jumbotron {
+  display: none !important;
+}
+
+.col-md-4 .card {
+  display: none !important;
+}
+
+/* Hide the first h1 in the main content area */
+#text h1:first-of-type {
+  display: none !important;
+}
+
+/* Hide the Modules/Procedures/Derived Types listings at the bottom of homepage only */
+#jumbotron ~ .row:not(#text) {
+  display: none !important;
+}
+
+#jumbotron ~ .row ~ hr {
+  display: none !important;
+}
+
+/* Hide footer */
+footer {
+  display: none !important;
+}
+
+/* Hide breadcrumb container */
+.container .p-2.mb-4.bg-light.border.rounded-3 {
+  display: none !important;
+}
+
+/* Sidebar navigation for guide page */
+.page-content {
+  position: relative;
+}
+
+#guide-sidebar {
+  position: fixed;
+  top: 80px;
+  left: 20px;
+  width: 250px;
+  max-height: calc(100vh - 100px);
+  overflow-y: auto;
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 5px;
+  padding: 15px;
+  font-size: 0.9em;
+}
+
+#guide-sidebar h4 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-size: 1.1em;
+  border-bottom: 1px solid #dee2e6;
+  padding-bottom: 5px;
+}
+
+#guide-sidebar ul {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+#guide-sidebar ul li {
+  margin: 5px 0;
+}
+
+#guide-sidebar ul li a {
+  text-decoration: none;
+  color: #007bff;
+  display: block;
+  padding: 3px 5px;
+  border-radius: 3px;
+  transition: background 0.2s;
+}
+
+#guide-sidebar ul li a:hover {
+  background: #e9ecef;
+}
+
+/* Adjust main content when sidebar is present - target only the body content container */
+body:has(#guide-sidebar) > .container {
+  margin-left: 280px !important;
+  margin-right: auto !important;
+  max-width: 900px !important;
+  padding-left: 30px !important;
+  padding-right: 30px !important;
+}
+
+/* Center the text content within the col-9 div */
+body:has(#guide-sidebar) #text {
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Center the landing page content */
+#text .col-md-8 {
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  float: none;
+}
+
+/* Improve readability of guide content */
+#text h2 {
+  margin-top: 2.5em;
+  margin-bottom: 1em;
+}
+
+#text h3 {
+  margin-top: 2em;
+  margin-bottom: 0.8em;
+}
+
+#text h4 {
+  margin-top: 1.5em;
+  margin-bottom: 0.6em;
+}
+
+#text p {
+  line-height: 1.6;
+  margin-bottom: 1em;
+}
+
+#text pre {
+  margin: 1.5em 0;
+  padding: 1em;
+  line-height: 1.5;
+}
+
+#text .codehilite {
+  margin: 1.5em 0;
+}
+
+#text .codehilite pre {
+  padding: 1.2em;
+  line-height: 1.6;
+}
+
+@media (max-width: 1200px) {
+  #guide-sidebar {
+    display: none;
+  }
+  body:has(#guide-sidebar) > .container {
+    margin-left: auto !important;
+    max-width: 100% !important;
+  }
+}

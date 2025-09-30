@@ -1,0 +1,35 @@
+[fprettify]
+# Indentation settings
+indent = 4
+whitespace = 2
+
+# Line length
+line-length = 120
+
+# Case handling
+case = 1 1 1 1  # keywords, procedures, operators, intrinsics (1=lower, 2=upper, 3=capitalize)
+
+# Disable auto-align (can be messy with complex code)
+disable-auto-align = true
+
+# Enable/disable specific features
+enable-decl = true
+disable-indent-mod = false
+
+# Whitespace rules
+whitespace-comma = true
+whitespace-assignment = true
+whitespace-relational = true
+whitespace-logical = true
+whitespace-plusminus = true
+whitespace-multdiv = true
+whitespace-print = true
+whitespace-type = true
+whitespace-intrinsics = true
+
+# Leave ampersands for line continuation as-is
+enable-replacements = false
+
+# Exclude patterns (directories/files to skip)
+exclude = build/
+         docs/

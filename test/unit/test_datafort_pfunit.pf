@@ -1,0 +1,121 @@
+!> pFUnit test suite for DataFort
+!!
+!! This demonstrates modern unit testing with pFUnit framework.
+!! Run with: fpm test
+!!
+!! Features:
+!! - Automatic test discovery
+!! - Rich assertions (assertEqual, assertTrue, assertAlmostEqual)
+!! - Test fixtures (setUp/tearDown)
+!! - Better error reporting
+!! - Parallel test execution support
+
+module test_datafort_pfunit
+    use funit
+    use datafort
+    use precision
+    implicit none
+
+contains
+
+    !> Test: DataFrame constructor and destructor
+    @test
+    subroutine test_constructor()
+        type(data_frame) :: df
+
+        call df%new()
+        @assertTrue(df%is_initialized(), "DataFrame should be initialized")
+        @assertEqual(0, df%ncols(), "New DataFrame should have 0 columns")
+        @assertEqual(0, df%nrows(), "New DataFrame should have 0 rows")
+
+        call df%destroy()
+    end subroutine test_constructor
+
+    !> Test: Append real column
+    @test
+    subroutine test_append_real_column()
+        type(data_frame) :: df
+        real(rk), dimension(5) :: data = [1.0_rk, 2.0_rk, 3.0_rk, 4.0_rk, 5.0_rk]
+
+        call df%new()
+        call df%append(data, "Values")
+
+        @assertEqual(1, df%ncols(), "Should have 1 column")
+        @assertEqual(5, df%nrows(), "Should have 5 rows")
+        @assertEqual("Values", df%header(1), "Header should match")
+
+        call df%destroy()
+    end subroutine test_append_real_column
+
+    !> Test: Statistical functions
+    @test
+    subroutine test_statistics()
+        type(data_frame) :: df
+        real(rk), dimension(5) :: data = [1.0_rk, 2.0_rk, 3.0_rk, 4.0_rk, 5.0_rk]
+        real(rk) :: mean_val, std_val
+
+        call df%new()
+        call df%append(data, "Values")
+
+        mean_val = df%mean_real(1)
+        std_val = df%std_real(1)
+
+        @assertEqual(3.0_rk, mean_val, tolerance=1.0e-10_rk, "Mean should be 3.0")
+        @assertTrue(std_val > 0.0_rk, "Standard deviation should be positive")
+
+        call df%destroy()
+    end subroutine test_statistics
+
+    !> Test: Column operations
+    @test
+    subroutine test_column_operations()
+        type(data_frame) :: df
+        real(rk), dimension(3) :: col1 = [1.0_rk, 2.0_rk, 3.0_rk]
+        real(rk), dimension(3) :: col2 = [4.0_rk, 5.0_rk, 6.0_rk]
+
+        call df%new()
+        call df%append(col1, "Col1")
+        call df%append(col2, "Col2")
+
+        @assertEqual(2, df%ncols(), "Should have 2 columns")
+
+        ! Test column retrieval
+        @assertEqual(1.0_rk, df%get_val_real(1, 1), tolerance=1.0e-10_rk)
+        @assertEqual(6.0_rk, df%get_val_real(2, 3), tolerance=1.0e-10_rk)
+
+        call df%destroy()
+    end subroutine test_column_operations
+
+    !> Test: Filter operations
+    @test
+    subroutine test_filter()
+        type(data_frame) :: df, filtered
+        real(rk), dimension(5) :: data = [1.0_rk, 2.0_rk, 3.0_rk, 4.0_rk, 5.0_rk]
+
+        call df%new()
+        call df%append(data, "Values")
+
+        ! Filter values between 2 and 4
+        filtered = df%filter_rows_real_range(1, 2.0_rk, 4.0_rk)
+
+        @assertEqual(3, filtered%nrows(), "Filtered should have 3 rows")
+
+        call df%destroy()
+        call filtered%destroy()
+    end subroutine test_filter
+
+    !> Test: Empty DataFrame behavior
+    @test
+    subroutine test_empty_dataframe()
+        type(data_frame) :: df
+
+        call df%new()
+
+        @assertTrue(df%empty(), "New DataFrame should be empty")
+        @assertEqual(0, df%ncols())
+        @assertEqual(0, df%nrows())
+
+        call df%destroy()
+    end subroutine test_empty_dataframe
+
+end module test_datafort_pfunit

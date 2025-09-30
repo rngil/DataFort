@@ -1,0 +1,542 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="Dataframes In Fortran">
+    <meta name="author" content="Renee Gil" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>Documentation &ndash; DataFort</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
+    <link href="../css/local.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+      <link href="../css/user.css" rel="stylesheet">
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">DataFort </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" href="index.html">Documentation</a></li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/absint.html">Abstract Interfaces</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>Documentation</h1>
+    <div class="container p-2 mb-4 bg-light border rounded-3">
+      <div class="row align-items-center justify-content-between">
+        <div class="col">
+          <ul class="list-inline" style="margin-bottom:0px; display:inline">
+          </ul>
+        </div>
+        <div class="col">
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb justify-content-end mb-0">
+              <li class="breadcrumb-item active" aria-current="page">Documentation</li>
+            </ol>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+
+    <div class="col-9" id='text'>
+      <script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Create sidebar
+    var sidebar = document.createElement('div');
+    sidebar.id = 'guide-sidebar';
+    sidebar.innerHTML = '<h4>Contents</h4><ul id="sidebar-nav"></ul>';
+
+    // Find all h2 headings in the main content
+    var headings = document.querySelectorAll('#text h2');
+    var navList = sidebar.querySelector('#sidebar-nav');
+
+    headings.forEach(function(heading) {
+        var li = document.createElement('li');
+        var a = document.createElement('a');
+
+        // Create or use existing anchor
+        if (!heading.id) {
+            heading.id = heading.textContent.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '');
+        }
+
+        a.href = '#' + heading.id;
+        a.textContent = heading.textContent;
+        li.appendChild(a);
+        navList.appendChild(li);
+
+        // Smooth scroll
+        a.addEventListener('click', function(e) {
+            e.preventDefault();
+            heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    });
+
+    // Append sidebar to body
+    document.body.appendChild(sidebar);
+});
+</script>
+
+<h1 id="datafort-guide">DataFort Guide</h1>
+<p>Comprehensive guide with practical examples for common data manipulation tasks.</p>
+<hr>
+<h2 id="reading-and-writing-data">Reading and Writing Data</h2>
+<h3 id="load-csv-with-headers">Load CSV with Headers</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">type</span><span class="p">(</span><span class="n">data_frame</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">df</span>
+<span class="k">call </span><span class="n">df</span><span class="p">%</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;data.csv&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.)</span><span class="w">  </span><span class="c">! .true. = has headers</span>
+<span class="k">call </span><span class="n">df</span><span class="p">%</span><span class="n">write_console</span><span class="p">()</span>
+</code></pre></div>
+
+<h3 id="write-to-csv">Write to CSV</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">call </span><span class="n">df</span><span class="p">%</span><span class="n">write_csv</span><span class="p">(</span><span class="s2">&quot;output.csv&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<hr>
+<h2 id="data-exploration">Data Exploration</h2>
+<h3 id="display-firstlast-rows">Display First/Last Rows</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">type</span><span class="p">(</span><span class="n">data_frame</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">head_df</span><span class="p">,</span><span class="w"> </span><span class="n">tail_df</span>
+<span class="n">head_df</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">df</span><span class="p">%</span><span class="n">head</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="w">     </span><span class="c">! First 5 rows</span>
+<span class="n">tail_df</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">df</span><span class="p">%</span><span class="n">tail</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="w">    </span><span class="c">! Last 10 rows</span>
+<span class="k">call </span><span class="n">head_df</span><span class="p">%</span><span class="n">write_console</span><span class="p">()</span>
+</code></pre></div>
+
+<h3 id="get-dataframe-info">Get DataFrame Info</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">call </span><span class="n">df</span><span class="p">%</span><span class="n">info</span><span class="p">()</span><span class="w">           </span><span class="c">! Print structure and types</span>
+<span class="k">call </span><span class="n">df</span><span class="p">%</span><span class="n">describe_numeric</span><span class="p">()</span><span class="w">  </span><span class="c">! Statistical summary</span>
+
+<span class="k">print</span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Shape:&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">df</span><span class="p">%</span><span class="nb">shape</span><span class="p">()</span>
+<span class="k">print</span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Rows:&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">df</span><span class="p">%</span><span class="n">nrows</span><span class="p">()</span>
+<span class="k">print</span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Cols:&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">df</span><span class="p">%</span><span class="n">ncols</span><span class="p">()</span>
+</code></pre></div>
+
+<h3 id="access-individual-elements">Access Individual Elements</h3>
+<h4 id="get-a-single-value">Get a Single Value</h4>
+<div class="codehilite"><pre><span></span><code><span class="kt">real</span><span class="p">(</span><span class="n">rk</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">value_r</span>
+<span class="kt">integer</span><span class="p">(</span><span class="n">ik</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">value_i</span>
+<span class="kt">character</span><span class="p">(</span><span class="nb">len</span><span class="o">=</span><span class="p">:),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">value_c</span>
+<span class="kt">logical</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">value_l</span>
+
+<span class="c">! Get value at row i, column j (by index)</span>
+<span class="k">call </span><span class="n">df</span><span class="p">%</span><span class="n">get_val_real</span><span class="p">(</span><span class="n">j</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">value_r</span><span class="p">)</span><span class="w">       </span><span class="c">! For real columns</span>
+<span class="k">call </span><span class="n">df</span><span class="p">%</span><span class="n">get_val_integer</span><span class="p">(</span><span class="n">j</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">value_i</span><span class="p">)</span><span class="w">    </span><span class="c">! For integer columns</span>
+<span class="k">call </span><span class="n">df</span><span class="p">%</span><span class="n">get_val_character</span><span class="p">(</span><span class="n">j</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">value_c</span><span class="p">)</span><span class="w">  </span><span class="c">! For character columns</span>
+<span class="k">call </span><span class="n">df</span><span class="p">%</span><span class="n">get_val_logical</span><span class="p">(</span><span class="n">j</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">value_l</span><span class="p">)</span><span class="w">    </span><span class="c">! For logical columns</span>
+
+<span class="c">! Example: Get value at row 5, column 2</span>
+<span class="k">call </span><span class="n">df</span><span class="p">%</span><span class="n">get_val_real</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="n">value_r</span><span class="p">)</span>
+<span class="k">print</span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Value at [5,2]:&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">value_r</span>
+</code></pre></div>
+
+<h4 id="get-value-by-column-name">Get Value by Column Name</h4>
+<div class="codehilite"><pre><span></span><code><span class="kt">character</span><span class="p">(</span><span class="nb">len</span><span class="o">=</span><span class="p">:),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">col_name</span>
+<span class="kt">real</span><span class="p">(</span><span class="n">rk</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">temperature</span>
+<span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">row_idx</span><span class="p">,</span><span class="w"> </span><span class="n">col_idx</span>
+
+<span class="n">row_idx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">10</span>
+<span class="n">col_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;Temperature&quot;</span>
+
+<span class="c">! First find column index</span>
+<span class="n">col_idx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">df</span><span class="p">%</span><span class="n">find_header_index</span><span class="p">(</span><span class="n">col_name</span><span class="p">)</span>
+
+<span class="c">! Then get the value</span>
+<span class="k">call </span><span class="n">df</span><span class="p">%</span><span class="n">get_val_real</span><span class="p">(</span><span class="n">col_idx</span><span class="p">,</span><span class="w"> </span><span class="n">row_idx</span><span class="p">,</span><span class="w"> </span><span class="n">temperature</span><span class="p">)</span>
+<span class="k">print</span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Temperature at row&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">row_idx</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;:&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">temperature</span>
+</code></pre></div>
+
+<h4 id="set-a-single-value">Set a Single Value</h4>
+<div class="codehilite"><pre><span></span><code><span class="c">! Set value at row i, column j</span>
+<span class="k">call </span><span class="n">df</span><span class="p">%</span><span class="n">set_val_real</span><span class="p">(</span><span class="n">j</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="mf">2.5_rk</span><span class="p">)</span><span class="w">        </span><span class="c">! For real columns</span>
+<span class="k">call </span><span class="n">df</span><span class="p">%</span><span class="n">set_val_integer</span><span class="p">(</span><span class="n">j</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="mi">100_ik</span><span class="p">)</span><span class="w">      </span><span class="c">! For integer columns</span>
+<span class="k">call </span><span class="n">df</span><span class="p">%</span><span class="n">set_val_character</span><span class="p">(</span><span class="n">j</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;NewVal&quot;</span><span class="p">)</span><span class="w">  </span><span class="c">! For character columns</span>
+<span class="k">call </span><span class="n">df</span><span class="p">%</span><span class="n">set_val_logical</span><span class="p">(</span><span class="n">j</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.)</span><span class="w">      </span><span class="c">! For logical columns</span>
+
+<span class="c">! Example: Set value at row 3, column 1</span>
+<span class="k">call </span><span class="n">df</span><span class="p">%</span><span class="n">set_val_real</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">9</span><span class="mf">9.9_rk</span><span class="p">)</span>
+</code></pre></div>
+
+<h4 id="access-by-header-name">Access by Header Name</h4>
+<div class="codehilite"><pre><span></span><code><span class="kt">character</span><span class="p">(</span><span class="nb">len</span><span class="o">=</span><span class="p">:),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">header</span>
+<span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">col_index</span>
+
+<span class="c">! Get column index from header name</span>
+<span class="n">header</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;Age&quot;</span>
+<span class="n">col_index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">df</span><span class="p">%</span><span class="n">find_header_index</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
+
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">col_index</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
+<span class="w">    </span><span class="c">! Use the column index to access data</span>
+<span class="w">    </span><span class="k">call </span><span class="n">df</span><span class="p">%</span><span class="n">get_val_integer</span><span class="p">(</span><span class="n">col_index</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="n">value_i</span><span class="p">)</span>
+<span class="w">    </span><span class="k">print</span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Age at row 5:&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">value_i</span>
+<span class="k">else</span>
+<span class="k">    print</span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Column not found&quot;</span>
+<span class="k">end if</span>
+</code></pre></div>
+
+<hr>
+<h2 id="data-selection-and-filtering">Data Selection and Filtering</h2>
+<h3 id="select-columns">Select Columns</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">type</span><span class="p">(</span><span class="n">data_frame</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">subset</span>
+<span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">dimension</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">cols</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">]</span>
+<span class="n">subset</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">df</span><span class="p">%</span><span class="n">select_columns</span><span class="p">(</span><span class="n">cols</span><span class="p">)</span>
+</code></pre></div>
+
+<h3 id="slice-rows">Slice Rows</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">type</span><span class="p">(</span><span class="n">data_frame</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">sliced</span>
+<span class="n">sliced</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">df</span><span class="p">%</span><span class="n">slice_rows</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="mi">20</span><span class="p">)</span><span class="w">  </span><span class="c">! Rows 10 to 20</span>
+</code></pre></div>
+
+<h3 id="filter-by-condition">Filter by Condition</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">type</span><span class="p">(</span><span class="n">data_frame</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">filtered</span>
+<span class="kt">logical</span><span class="p">,</span><span class="w"> </span><span class="k">dimension</span><span class="p">(:),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">mask</span>
+
+<span class="c">! Filter numeric range</span>
+<span class="n">filtered</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">df</span><span class="p">%</span><span class="n">filter_rows_real_range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="mf">0.0_rk</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="mf">0.0_rk</span><span class="p">)</span>
+
+<span class="c">! Filter by string pattern</span>
+<span class="n">filtered</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">df</span><span class="p">%</span><span class="n">filter_rows_string_pattern</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Alice&quot;</span><span class="p">)</span>
+
+<span class="c">! Custom logical mask</span>
+<span class="k">allocate</span><span class="p">(</span><span class="n">mask</span><span class="p">(</span><span class="n">df</span><span class="p">%</span><span class="n">nrows</span><span class="p">()))</span>
+<span class="n">mask</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">temperatures</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">2</span><span class="mf">5.0_rk</span>
+<span class="n">filtered</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">df</span><span class="p">%</span><span class="n">filter_rows_logical</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>
+</code></pre></div>
+
+<hr>
+<h2 id="statistics-and-aggregation">Statistics and Aggregation</h2>
+<h3 id="basic-statistics">Basic Statistics</h3>
+<div class="codehilite"><pre><span></span><code><span class="kt">real</span><span class="p">(</span><span class="n">rk</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">avg</span><span class="p">,</span><span class="w"> </span><span class="n">std_dev</span><span class="p">,</span><span class="w"> </span><span class="n">var</span>
+<span class="kt">integer</span><span class="p">(</span><span class="n">ik</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">total</span>
+
+<span class="c">! Column 1 statistics</span>
+<span class="n">avg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">df</span><span class="p">%</span><span class="n">mean_real</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">std_dev</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">df</span><span class="p">%</span><span class="n">std_real</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">var</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">df</span><span class="p">%</span><span class="n">variance_real</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">total</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">df</span><span class="p">%</span><span class="n">sum_integer</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="k">print</span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Mean:&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">avg</span>
+<span class="k">print</span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Std Dev:&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">std_dev</span>
+</code></pre></div>
+
+<h3 id="percentiles-and-quantiles">Percentiles and Quantiles</h3>
+<div class="codehilite"><pre><span></span><code><span class="kt">real</span><span class="p">(</span><span class="n">rk</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">median</span><span class="p">,</span><span class="w"> </span><span class="n">q25</span><span class="p">,</span><span class="w"> </span><span class="n">q75</span>
+
+<span class="n">median</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">df</span><span class="p">%</span><span class="n">median_real</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">q25</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">df</span><span class="p">%</span><span class="n">percentile_real</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="mf">5.0_rk</span><span class="p">)</span>
+<span class="n">q75</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">df</span><span class="p">%</span><span class="n">percentile_real</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">7</span><span class="mf">5.0_rk</span><span class="p">)</span>
+
+<span class="k">print</span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Median:&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">median</span>
+<span class="k">print</span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;IQR:&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">q75</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">q25</span>
+</code></pre></div>
+
+<h3 id="correlation">Correlation</h3>
+<div class="codehilite"><pre><span></span><code><span class="kt">real</span><span class="p">(</span><span class="n">rk</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">corr</span>
+<span class="n">corr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">df</span><span class="p">%</span><span class="n">correlation_real</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w">  </span><span class="c">! Between columns 1 and 2</span>
+<span class="k">print</span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Correlation:&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">corr</span>
+</code></pre></div>
+
+<hr>
+<h2 id="data-transformation">Data Transformation</h2>
+<h3 id="normalize-data">Normalize Data</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">call </span><span class="n">df</span><span class="p">%</span><span class="n">normalize_column_real</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w">  </span><span class="c">! Scale to [0, 1]</span>
+</code></pre></div>
+
+<h3 id="standardize-data">Standardize Data</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">call </span><span class="n">df</span><span class="p">%</span><span class="n">standardize_column_real</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w">  </span><span class="c">! z-score normalization</span>
+</code></pre></div>
+
+<h3 id="mathematical-operations">Mathematical Operations</h3>
+<div class="codehilite"><pre><span></span><code><span class="c">! Apply functions to entire columns</span>
+<span class="k">call </span><span class="n">df</span><span class="p">%</span><span class="n">abs_column_real</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="k">call </span><span class="n">df</span><span class="p">%</span><span class="n">log_column</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="k">call </span><span class="n">df</span><span class="p">%</span><span class="n">exp_column</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="k">call </span><span class="n">df</span><span class="p">%</span><span class="n">sqrt_column</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="k">call </span><span class="n">df</span><span class="p">%</span><span class="n">pow_column</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2.0_rk</span><span class="p">)</span><span class="w">  </span><span class="c">! Raise to power</span>
+<span class="k">call </span><span class="n">df</span><span class="p">%</span><span class="n">round_column</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w">     </span><span class="c">! Round to 2 decimals</span>
+</code></pre></div>
+
+<h3 id="cumulative-and-differencing">Cumulative and Differencing</h3>
+<div class="codehilite"><pre><span></span><code><span class="kt">real</span><span class="p">(</span><span class="n">rk</span><span class="p">),</span><span class="w"> </span><span class="k">dimension</span><span class="p">(:),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">cumulative</span><span class="p">,</span><span class="w"> </span><span class="n">differences</span>
+
+<span class="n">cumulative</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">df</span><span class="p">%</span><span class="n">cumsum_real</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">differences</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">df</span><span class="p">%</span><span class="n">diff_real</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</code></pre></div>
+
+<hr>
+<h2 id="sorting-and-ranking">Sorting and Ranking</h2>
+<h3 id="sort-by-column">Sort by Column</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">call </span><span class="n">df</span><span class="p">%</span><span class="n">sort_by_column</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">ascending</span><span class="o">=</span><span class="p">.</span><span class="n">true</span><span class="p">.)</span>
+</code></pre></div>
+
+<h3 id="get-ranks">Get Ranks</h3>
+<div class="codehilite"><pre><span></span><code><span class="kt">real</span><span class="p">(</span><span class="n">rk</span><span class="p">),</span><span class="w"> </span><span class="k">dimension</span><span class="p">(:),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">ranks</span>
+<span class="n">ranks</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">df</span><span class="p">%</span><span class="n">rank_real</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</code></pre></div>
+
+<h3 id="check-if-sorted">Check if Sorted</h3>
+<div class="codehilite"><pre><span></span><code><span class="kt">logical</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">sorted</span>
+<span class="n">sorted</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">df</span><span class="p">%</span><span class="n">is_sorted_real</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</code></pre></div>
+
+<hr>
+<h2 id="missing-data-nan-handling">Missing Data (NaN) Handling</h2>
+<h3 id="check-for-missing-values">Check for Missing Values</h3>
+<div class="codehilite"><pre><span></span><code><span class="kt">logical</span><span class="p">,</span><span class="w"> </span><span class="k">dimension</span><span class="p">(:),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">na_mask</span>
+<span class="n">na_mask</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">df</span><span class="p">%</span><span class="n">isna_real</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c">! Count missing values</span>
+<span class="k">print</span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Missing values:&quot;</span><span class="p">,</span><span class="w"> </span><span class="nb">count</span><span class="p">(</span><span class="n">na_mask</span><span class="p">)</span>
+</code></pre></div>
+
+<h3 id="fill-missing-values">Fill Missing Values</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">call </span><span class="n">df</span><span class="p">%</span><span class="n">fillna_real</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mf">0.0_rk</span><span class="p">)</span><span class="w">  </span><span class="c">! Fill with 0</span>
+</code></pre></div>
+
+<h3 id="drop-missing-values">Drop Missing Values</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">type</span><span class="p">(</span><span class="n">data_frame</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">cleaned</span>
+<span class="n">cleaned</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">df</span><span class="p">%</span><span class="n">dropna</span><span class="p">()</span>
+</code></pre></div>
+
+<hr>
+<h2 id="column-operations">Column Operations</h2>
+<h3 id="add-column">Add Column</h3>
+<div class="codehilite"><pre><span></span><code><span class="kt">real</span><span class="p">(</span><span class="n">rk</span><span class="p">),</span><span class="w"> </span><span class="k">dimension</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">new_data</span>
+<span class="k">call </span><span class="n">df</span><span class="p">%</span><span class="n">append</span><span class="p">(</span><span class="n">new_data</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;NewColumn&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<h3 id="drop-column">Drop Column</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">call </span><span class="n">df</span><span class="p">%</span><span class="n">drop_column</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="w">  </span><span class="c">! Drop column 3</span>
+</code></pre></div>
+
+<h3 id="rename-column">Rename Column</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">call </span><span class="n">df</span><span class="p">%</span><span class="n">rename_column</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Temperature_C&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<h3 id="reorder-columns">Reorder Columns</h3>
+<div class="codehilite"><pre><span></span><code><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">dimension</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">new_order</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">]</span>
+<span class="k">call </span><span class="n">df</span><span class="p">%</span><span class="n">reorder_columns</span><span class="p">(</span><span class="n">new_order</span><span class="p">)</span>
+</code></pre></div>
+
+<h3 id="get-column-type">Get Column Type</h3>
+<div class="codehilite"><pre><span></span><code><span class="kt">integer</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">col_type</span>
+<span class="n">col_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">df</span><span class="p">%</span><span class="n">get_col_type</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="c">! Returns: 1=Real, 2=Integer, 3=Logical, 4=Character, 5=Complex</span>
+</code></pre></div>
+
+<hr>
+<h2 id="joining-and-merging">Joining and Merging</h2>
+<h3 id="inner-join">Inner Join</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">type</span><span class="p">(</span><span class="n">data_frame</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">df1</span><span class="p">,</span><span class="w"> </span><span class="n">df2</span><span class="p">,</span><span class="w"> </span><span class="k">result</span>
+<span class="k">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">df1</span><span class="p">%</span><span class="n">inner_join</span><span class="p">(</span><span class="n">df2</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w">  </span><span class="c">! Join on column 1 of both</span>
+</code></pre></div>
+
+<h3 id="left-join">Left Join</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">df1</span><span class="p">%</span><span class="n">left_join</span><span class="p">(</span><span class="n">df2</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+</code></pre></div>
+
+<h3 id="right-join">Right Join</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">df1</span><span class="p">%</span><span class="n">right_join</span><span class="p">(</span><span class="n">df2</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+</code></pre></div>
+
+<h3 id="outer-join">Outer Join</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">df1</span><span class="p">%</span><span class="n">outer_join</span><span class="p">(</span><span class="n">df2</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+</code></pre></div>
+
+<h3 id="concatenate-dataframes">Concatenate DataFrames</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">type</span><span class="p">(</span><span class="n">data_frame</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">combined</span>
+<span class="n">combined</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">df1</span><span class="p">%</span><span class="n">concat</span><span class="p">(</span><span class="n">df2</span><span class="p">)</span><span class="w">  </span><span class="c">! Stack vertically</span>
+</code></pre></div>
+
+<hr>
+<h2 id="duplicates">Duplicates</h2>
+<h3 id="find-duplicates">Find Duplicates</h3>
+<div class="codehilite"><pre><span></span><code><span class="kt">logical</span><span class="p">,</span><span class="w"> </span><span class="k">dimension</span><span class="p">(:),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">is_dup</span>
+<span class="n">is_dup</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">df</span><span class="p">%</span><span class="n">duplicated</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w">  </span><span class="c">! Check column 1</span>
+</code></pre></div>
+
+<h3 id="drop-duplicates">Drop Duplicates</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">type</span><span class="p">(</span><span class="n">data_frame</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">unique_df</span>
+<span class="n">unique_df</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">df</span><span class="p">%</span><span class="n">drop_duplicates</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w">  </span><span class="c">! Based on column 1</span>
+</code></pre></div>
+
+<h3 id="get-unique-values">Get Unique Values</h3>
+<div class="codehilite"><pre><span></span><code><span class="kt">real</span><span class="p">(</span><span class="n">rk</span><span class="p">),</span><span class="w"> </span><span class="k">dimension</span><span class="p">(:),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">unique_vals</span>
+<span class="n">unique_vals</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">df</span><span class="p">%</span><span class="n">unique_real</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</code></pre></div>
+
+<h3 id="value-counts">Value Counts</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">type</span><span class="p">(</span><span class="n">data_frame</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">counts</span>
+<span class="n">counts</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">df</span><span class="p">%</span><span class="n">value_counts_real</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="k">call </span><span class="n">counts</span><span class="p">%</span><span class="n">write_console</span><span class="p">()</span>
+</code></pre></div>
+
+<hr>
+<h2 id="row-operations">Row Operations</h2>
+<h3 id="apply-function-to-row">Apply Function to Row</h3>
+<div class="codehilite"><pre><span></span><code><span class="c">! Define a function that operates on a row</span>
+<span class="k">function </span><span class="n">row_sum</span><span class="p">(</span><span class="n">row_values</span><span class="p">,</span><span class="w"> </span><span class="n">num_cols</span><span class="p">)</span><span class="w"> </span><span class="k">result</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+<span class="w">    </span><span class="k">use </span><span class="nb">precision</span>
+<span class="nb">    </span><span class="kt">real</span><span class="p">(</span><span class="n">rk</span><span class="p">),</span><span class="w"> </span><span class="k">dimension</span><span class="p">(:),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">row_values</span>
+<span class="w">    </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">num_cols</span>
+<span class="w">    </span><span class="kt">real</span><span class="p">(</span><span class="n">rk</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">output</span>
+<span class="w">    </span><span class="n">output</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">sum</span><span class="p">(</span><span class="n">row_values</span><span class="p">)</span>
+<span class="k">end function </span><span class="n">row_sum</span>
+
+<span class="c">! Apply to a single row</span>
+<span class="kt">real</span><span class="p">(</span><span class="n">rk</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="k">result</span>
+<span class="k">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">df</span><span class="p">%</span><span class="n">apply_to_row_real</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="n">row_sum</span><span class="p">)</span><span class="w">  </span><span class="c">! Apply to row 5</span>
+</code></pre></div>
+
+<h3 id="apply-function-to-all-rows">Apply Function to All Rows</h3>
+<div class="codehilite"><pre><span></span><code><span class="kt">real</span><span class="p">(</span><span class="n">rk</span><span class="p">),</span><span class="w"> </span><span class="k">dimension</span><span class="p">(:),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">results</span>
+<span class="n">results</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">df</span><span class="p">%</span><span class="n">apply_to_all_rows_real</span><span class="p">(</span><span class="n">row_sum</span><span class="p">)</span><span class="w">  </span><span class="c">! Apply to all rows</span>
+</code></pre></div>
+
+<hr>
+<h2 id="other-operations">Other Operations</h2>
+<h3 id="transpose">Transpose</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">type</span><span class="p">(</span><span class="n">data_frame</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">transposed</span>
+<span class="n">transposed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">df</span><span class="p">%</span><span class="nb">transpose</span><span class="p">()</span>
+</code></pre></div>
+
+<h3 id="sample-rows">Sample Rows</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">type</span><span class="p">(</span><span class="n">data_frame</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">sample_df</span>
+<span class="n">sample_df</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">df</span><span class="p">%</span><span class="n">sample</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="w">  </span><span class="c">! Random 10 rows</span>
+</code></pre></div>
+
+<h3 id="shuffle">Shuffle</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">call </span><span class="n">df</span><span class="p">%</span><span class="n">shuffle</span><span class="p">()</span><span class="w">  </span><span class="c">! Randomize row order</span>
+</code></pre></div>
+
+<h3 id="copy">Copy</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">type</span><span class="p">(</span><span class="n">data_frame</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">df_copy</span>
+<span class="n">df_copy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">df</span><span class="p">%</span><span class="n">copy</span><span class="p">()</span>
+</code></pre></div>
+
+<h3 id="clear">Clear</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">call </span><span class="n">df</span><span class="p">%</span><span class="n">clear</span><span class="p">()</span><span class="w">  </span><span class="c">! Empty the dataframe</span>
+</code></pre></div>
+
+<hr>
+<h2 id="complete-example">Complete Example</h2>
+<div class="codehilite"><pre><span></span><code><span class="k">program </span><span class="n">datafort_example</span>
+<span class="w">    </span><span class="k">use </span><span class="n">datafort</span>
+<span class="w">    </span><span class="k">use </span><span class="nb">precision</span>
+<span class="nb">    </span><span class="k">implicit none</span>
+
+<span class="k">    type</span><span class="p">(</span><span class="n">data_frame</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">df</span><span class="p">,</span><span class="w"> </span><span class="n">filtered</span><span class="p">,</span><span class="w"> </span><span class="n">stats</span>
+<span class="w">    </span><span class="kt">real</span><span class="p">(</span><span class="n">rk</span><span class="p">),</span><span class="w"> </span><span class="k">dimension</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">temps</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mi">2</span><span class="mf">3.1_rk</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="mf">5.3_rk</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="mf">4.8_rk</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="mf">2.5_rk</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="mf">6.0_rk</span><span class="p">]</span>
+<span class="w">    </span><span class="kt">integer</span><span class="p">(</span><span class="n">ik</span><span class="p">),</span><span class="w"> </span><span class="k">dimension</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">ids</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mi">1_ik</span><span class="p">,</span><span class="w"> </span><span class="mi">2_ik</span><span class="p">,</span><span class="w"> </span><span class="mi">3_ik</span><span class="p">,</span><span class="w"> </span><span class="mi">4_ik</span><span class="p">,</span><span class="w"> </span><span class="mi">5_ik</span><span class="p">]</span>
+
+<span class="w">    </span><span class="c">! Create dataframe</span>
+<span class="w">    </span><span class="k">call </span><span class="n">df</span><span class="p">%</span><span class="n">new</span><span class="p">()</span>
+<span class="w">    </span><span class="k">call </span><span class="n">df</span><span class="p">%</span><span class="n">append</span><span class="p">(</span><span class="n">ids</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;ID&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="k">call </span><span class="n">df</span><span class="p">%</span><span class="n">append</span><span class="p">(</span><span class="n">temps</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Temperature&quot;</span><span class="p">)</span>
+
+<span class="w">    </span><span class="c">! Basic info</span>
+<span class="w">    </span><span class="k">call </span><span class="n">df</span><span class="p">%</span><span class="n">info</span><span class="p">()</span>
+<span class="w">    </span><span class="k">call </span><span class="n">df</span><span class="p">%</span><span class="n">describe_numeric</span><span class="p">()</span>
+
+<span class="w">    </span><span class="c">! Statistics</span>
+<span class="w">    </span><span class="k">print</span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Mean temp:&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">df</span><span class="p">%</span><span class="n">mean_real</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="w">    </span><span class="k">print</span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Max temp:&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">df</span><span class="p">%</span><span class="n">max_real</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="w">    </span><span class="c">! Filter</span>
+<span class="w">    </span><span class="n">filtered</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">df</span><span class="p">%</span><span class="n">filter_rows_real_range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="mf">4.0_rk</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="mf">6.0_rk</span><span class="p">)</span>
+<span class="w">    </span><span class="k">call </span><span class="n">filtered</span><span class="p">%</span><span class="n">write_console</span><span class="p">()</span>
+
+<span class="w">    </span><span class="c">! Transform</span>
+<span class="w">    </span><span class="k">call </span><span class="n">df</span><span class="p">%</span><span class="n">normalize_column_real</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="w">    </span><span class="c">! Export</span>
+<span class="w">    </span><span class="k">call </span><span class="n">df</span><span class="p">%</span><span class="n">write_csv</span><span class="p">(</span><span class="s2">&quot;output.csv&quot;</span><span class="p">)</span>
+
+<span class="w">    </span><span class="c">! Cleanup</span>
+<span class="w">    </span><span class="k">call </span><span class="n">df</span><span class="p">%</span><span class="n">destroy</span><span class="p">()</span>
+<span class="w">    </span><span class="k">call </span><span class="n">filtered</span><span class="p">%</span><span class="n">destroy</span><span class="p">()</span>
+
+<span class="k">end program </span><span class="n">datafort_example</span>
+</code></pre></div>
+    </div>
+  </div>
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              DataFort
+ was developed by Renee Gil<br>              &copy; 2025 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+ on 2025-09-29 21:35 -0400             </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+  </body>
+</html>
