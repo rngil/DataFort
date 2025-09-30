@@ -1143,7 +1143,7 @@ contains
         character(len=100), allocatable, intent(out) :: fields(:)
 
         integer :: i, start, field_count, len_line
-        logical :: in_quotes
+        logical :: in_quotes, is_delimiter
         character(len=100) :: temp_fields(50)  ! Max 50 fields
         character(len=:), allocatable :: trimmed_line
 
@@ -1160,21 +1160,36 @@ contains
         in_quotes = .false.
 
         do i = 1, len_line + 1
+            is_delimiter = .false.
+
+            ! Check for quotes within bounds
             if (i <= len_line) then
                 if (trimmed_line(i:i) == '"') then
                     in_quotes = .not. in_quotes
                     cycle
                 end if
+
+                ! Check if current character is a delimiter
+                if (trimmed_line(i:i) == ',' .and. .not. in_quotes) then
+                    is_delimiter = .true.
+                end if
             end if
 
-            if ((i > len_line) .or. (trimmed_line(i:i) == ',' .and. .not. in_quotes)) then
+            ! Process field if we hit a delimiter or end of line
+            if (i > len_line .or. is_delimiter) then
                 field_count = field_count + 1
                 if (field_count > 50) error stop "Too many fields in CSV line"
 
-                if (i == start) then
+                ! Extract the field
+                if (i == start .or. start > len_line) then
                     temp_fields(field_count) = ""
                 else
-                    temp_fields(field_count) = trim(adjustl(trimmed_line(start:i-1)))
+                    if (i > len_line) then
+                        temp_fields(field_count) = trim(adjustl(trimmed_line(start:len_line)))
+                    else
+                        temp_fields(field_count) = trim(adjustl(trimmed_line(start:i-1)))
+                    end if
+
                     ! Remove surrounding quotes if present
                     if (len(trim(temp_fields(field_count))) >= 2) then
                         if (temp_fields(field_count)(1:1) == '"' .and. &
