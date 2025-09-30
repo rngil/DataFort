@@ -6,9 +6,6 @@ whitespace = 2
 # Line length
 line-length = 120
 
-# Disable auto-align (can be messy with complex code)
-disable-auto-align = true
-
 # Enable/disable specific features
 enable-decl = true
 disable-indent-mod = false
@@ -29,4 +26,4 @@ enable-replacements = false
 
 # Exclude patterns (directories/files to skip)
 exclude = build/
-         docs/
+exclude = docs/
