@@ -37,18 +37,18 @@ program test_nan
     labels = ["A     ", "B     ", "C     ", "D     ", "E     ", "F     "]
 
     call df % new()
-    call df % append(temps, "Temperature")
-    call df % append(counts, "Count")
-    call df % append(labels, "Label")
+    call df_append_real(df, temps, "Temperature")
+    call df_append_integer(df, counts, "Count")
+    call df_append_character(df, labels, "Label")
 
     write (*, '(a)') ""
     write (*, '(a)') "Original data with NaN values:"
-    call df % write_console()
+    call df_write_console(df)
 
     ! Test isna_real
     write (*, '(a)') ""
     write (*, '(a)') "Test 1: Check which temperature values are NaN"
-    nan_mask = df % isna_real(1)
+    nan_mask = df_isna_real(df, 1)
     write (*, '(a)') "   NaN mask for Temperature column:"
     do i = 1, size(nan_mask)
         write (*, '(a,i0,a,l1)') "   Row ", i, ": ", nan_mask(i)
@@ -64,7 +64,7 @@ program test_nan
     ! Test isna_integer
     write (*, '(a)') ""
     write (*, '(a)') "Test 2: Check which count values are NaN"
-    nan_mask = df % isna_integer(2)
+    nan_mask = df_isna_integer(df, 2)
     write (*, '(a)') "   NaN mask for Count column:"
     do i = 1, size(nan_mask)
         write (*, '(a,i0,a,l1)') "   Row ", i, ": ", nan_mask(i)
@@ -80,24 +80,24 @@ program test_nan
     ! Test fillna_real
     write (*, '(a)') ""
     write (*, '(a)') "Test 3: Fill NaN in Temperature with 0.0"
-    call df % fillna_real(1, 0.0_rk)
-    call df % write_console()
+    call df_fillna_real(df, 1, 0.0_rk)
+    call df_write_console(df)
     ! Verify NaN values were filled
-    nan_mask = df % isna_real(1)
+    nan_mask = df_isna_real(df, 1)
     call assert_logical(all(.not. nan_mask), .true., "fillna_real removed all NaN", num_failed)
-    call assert_real_equal(df % get_val_real(1, 2), 0.0_rk, "fillna_real row 2 value", num_failed)
-    call assert_real_equal(df % get_val_real(1, 5), 0.0_rk, "fillna_real row 5 value", num_failed)
+    call assert_real_equal(df_get_val_real(df, 2, 1), 0.0_rk, "fillna_real row 2 value", num_failed)
+    call assert_real_equal(df_get_val_real(df, 5, 1), 0.0_rk, "fillna_real row 5 value", num_failed)
 
     ! Test fillna_integer
     write (*, '(a)') ""
     write (*, '(a)') "Test 4: Fill NaN in Count with 0"
-    call df % fillna_integer(2, 0_ik)
-    call df % write_console()
+    call df_fillna_integer(df, 2, 0_ik)
+    call df_write_console(df)
     ! Verify NaN values were filled
-    nan_mask = df % isna_integer(2)
+    nan_mask = df_isna_integer(df, 2)
     call assert_logical(all(.not. nan_mask), .true., "fillna_integer removed all NaN", num_failed)
-    call assert_int_equal(df % get_val_integer(2, 3), 0_ik, "fillna_integer row 3 value", num_failed)
-    call assert_int_equal(df % get_val_integer(2, 6), 0_ik, "fillna_integer row 6 value", num_failed)
+    call assert_int_equal(df_get_val_integer(df, 3, 2), 0_ik, "fillna_integer row 3 value", num_failed)
+    call assert_int_equal(df_get_val_integer(df, 6, 2), 0_ik, "fillna_integer row 6 value", num_failed)
 
     ! Recreate data with NaN for dropna test
     call df % destroy()
@@ -116,26 +116,26 @@ program test_nan
     counts(6) = NaN_ik
 
     call df % new()
-    call df % append(temps, "Temperature")
-    call df % append(counts, "Count")
-    call df % append(labels, "Label")
+    call df_append_real(df, temps, "Temperature")
+    call df_append_integer(df, counts, "Count")
+    call df_append_character(df, labels, "Label")
 
     write (*, '(a)') ""
     write (*, '(a)') "Test 5: Drop all rows containing NaN"
     write (*, '(a)') "Original:"
-    call df % write_console()
+    call df_write_console(df)
 
-    clean_df = df % dropna()
+    clean_df = df_dropna(df)
     write (*, '(a)') ""
     write (*, '(a)') "After dropna():"
-    call clean_df % write_console()
+    call df_write_console(clean_df)
     write (*, '(a,i0,a,i0)') "   Dropped ", df % nrows() - clean_df % nrows(), " rows out of ", df % nrows()
     ! Verify correct number of rows dropped (rows 2, 3, 5, 6 have NaN)
     call assert_int_equal(clean_df % nrows(), 2, "dropna() result row count", num_failed)
     ! Verify remaining rows have no NaN
-    nan_mask = clean_df % isna_real(1)
+    nan_mask = df_isna_real(clean_df, 1)
     call assert_logical(all(.not. nan_mask), .true., "dropna() removed all real NaN", num_failed)
-    nan_mask = clean_df % isna_integer(2)
+    nan_mask = df_isna_integer(clean_df, 2)
     call assert_logical(all(.not. nan_mask), .true., "dropna() removed all integer NaN", num_failed)
 
     ! Clean up

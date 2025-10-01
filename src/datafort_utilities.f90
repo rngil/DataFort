@@ -10,6 +10,7 @@ module datafort_utilities
     use precision
     use types
     use datafort_types
+    use datafort_accessors
     use column_class
     implicit none
     private
@@ -420,9 +421,9 @@ contains
                     real_slice(j) = col % getr(start_row + j - 1)
                 end do
                 if (df % get_with_headers()) then
-                    call new_df % append(real_slice, df % header(i))
+                    call df_append_real(new_df, real_slice, df % header(i))
                 else
-                    call new_df % append(real_slice)
+                    call df_append_real(new_df, real_slice)
                 end if
                 deallocate (real_slice)
             case (INTEGER_NUM)
@@ -431,9 +432,9 @@ contains
                     int_slice(j) = col % geti(start_row + j - 1)
                 end do
                 if (df % get_with_headers()) then
-                    call new_df % append(int_slice, df % header(i))
+                    call df_append_integer(new_df, int_slice, df % header(i))
                 else
-                    call new_df % append(int_slice)
+                    call df_append_integer(new_df, int_slice)
                 end if
                 deallocate (int_slice)
             case (LOGICAL_NUM)
@@ -442,9 +443,9 @@ contains
                     logical_slice(j) = col % getl(start_row + j - 1)
                 end do
                 if (df % get_with_headers()) then
-                    call new_df % append(logical_slice, df % header(i))
+                    call df_append_logical(new_df, logical_slice, df % header(i))
                 else
-                    call new_df % append(logical_slice)
+                    call df_append_logical(new_df, logical_slice)
                 end if
                 deallocate (logical_slice)
             case (CHARACTER_NUM)
@@ -453,9 +454,9 @@ contains
                     char_slice(j) = col % getch(start_row + j - 1)
                 end do
                 if (df % get_with_headers()) then
-                    call new_df % append(char_slice, df % header(i))
+                    call df_append_character(new_df, char_slice, df % header(i))
                 else
-                    call new_df % append(char_slice)
+                    call df_append_character(new_df, char_slice)
                 end if
                 deallocate (char_slice)
             case (COMPLEX_NUM)
@@ -464,9 +465,9 @@ contains
                     complex_slice(j) = col % getc(start_row + j - 1)
                 end do
                 if (df % get_with_headers()) then
-                    call new_df % append(complex_slice, df % header(i))
+                    call df_append_complex(new_df, complex_slice, df % header(i))
                 else
-                    call new_df % append(complex_slice)
+                    call df_append_complex(new_df, complex_slice)
                 end if
                 deallocate (complex_slice)
             end select
@@ -498,9 +499,9 @@ contains
                 real_filtered(i) = col % getr(selected_rows(i))
             end do
             if (source_df % get_with_headers()) then
-                call target_df % append(real_filtered, source_df % header(col_index))
+                call df_append_real(target_df, real_filtered, source_df % header(col_index))
             else
-                call target_df % append(real_filtered)
+                call df_append_real(target_df, real_filtered)
             end if
             deallocate (real_filtered)
         case (INTEGER_NUM)
@@ -509,9 +510,9 @@ contains
                 int_filtered(i) = col % geti(selected_rows(i))
             end do
             if (source_df % get_with_headers()) then
-                call target_df % append(int_filtered, source_df % header(col_index))
+                call df_append_integer(target_df, int_filtered, source_df % header(col_index))
             else
-                call target_df % append(int_filtered)
+                call df_append_integer(target_df, int_filtered)
             end if
             deallocate (int_filtered)
         case (LOGICAL_NUM)
@@ -520,9 +521,9 @@ contains
                 logical_filtered(i) = col % getl(selected_rows(i))
             end do
             if (source_df % get_with_headers()) then
-                call target_df % append(logical_filtered, source_df % header(col_index))
+                call df_append_logical(target_df, logical_filtered, source_df % header(col_index))
             else
-                call target_df % append(logical_filtered)
+                call df_append_logical(target_df, logical_filtered)
             end if
             deallocate (logical_filtered)
         case (CHARACTER_NUM)
@@ -531,9 +532,9 @@ contains
                 char_filtered(i) = col % getch(selected_rows(i))
             end do
             if (source_df % get_with_headers()) then
-                call target_df % append(char_filtered, source_df % header(col_index))
+                call df_append_character(target_df, char_filtered, source_df % header(col_index))
             else
-                call target_df % append(char_filtered)
+                call df_append_character(target_df, char_filtered)
             end if
             deallocate (char_filtered)
         case (COMPLEX_NUM)
@@ -542,9 +543,9 @@ contains
                 complex_filtered(i) = col % getc(selected_rows(i))
             end do
             if (source_df % get_with_headers()) then
-                call target_df % append(complex_filtered, source_df % header(col_index))
+                call df_append_complex(target_df, complex_filtered, source_df % header(col_index))
             else
-                call target_df % append(complex_filtered)
+                call df_append_complex(target_df, complex_filtered)
             end if
             deallocate (complex_filtered)
         end select

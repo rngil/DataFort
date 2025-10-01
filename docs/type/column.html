@@ -90,7 +90,7 @@
 
             <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
               <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
-                 title="<p>25.4% of total for derived types.</p>Including implementation: 260 statements,  8.4% of total for derived types.">34 statements</a>
+                 title="<p>54.0% of total for derived types.</p>Including implementation: 260 statements, 53.3% of total for derived types.">34 statements</a>
             </li>
 
         </ul>
@@ -1664,7 +1664,7 @@
 
     <h4>
     Return Value
-    <small>complex(kind=rk), dimension(this%n)</small>
+    <small>complex(kind=rk), dimension(this % n)</small>
     </h4>
     
 
@@ -1723,7 +1723,7 @@
 
     <h4>
     Return Value
-    <small>integer(kind=ik), dimension(this%n)</small>
+    <small>integer(kind=ik), dimension(this % n)</small>
     </h4>
     
 
@@ -1782,7 +1782,7 @@
 
     <h4>
     Return Value
-    <small>logical, dimension(this%n)</small>
+    <small>logical, dimension(this % n)</small>
     </h4>
     
 
@@ -1841,7 +1841,7 @@
 
     <h4>
     Return Value
-    <small>real(kind=rk), dimension(this%n)</small>
+    <small>real(kind=rk), dimension(this % n)</small>
     </h4>
     
 
@@ -2329,7 +2329,7 @@
 
     <h4>
     Return Value
-    <small>complex(kind=rk), dimension(this%n)</small>
+    <small>complex(kind=rk), dimension(this % n)</small>
     </h4>
     
 
@@ -2565,7 +2565,7 @@
 
     <h4>
     Return Value
-    <small>integer(kind=ik), dimension(this%n)</small>
+    <small>integer(kind=ik), dimension(this % n)</small>
     </h4>
     
 
@@ -2683,7 +2683,7 @@
 
     <h4>
     Return Value
-    <small>logical, dimension(this%n)</small>
+    <small>logical, dimension(this % n)</small>
     </h4>
     
 
@@ -2801,7 +2801,7 @@
 
     <h4>
     Return Value
-    <small>real(kind=rk), dimension(this%n)</small>
+    <small>real(kind=rk), dimension(this % n)</small>
     </h4>
     
 
@@ -3160,70 +3160,70 @@
     <h3><span class="anchor" id="src"></span>Source Code</h3>
     <div class="hl codehilite"><pre><span></span><span class="w">    </span><span class="k">type</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">column</span>
 <span class="w">        </span><span class="k">private</span>
-<span class="k">        </span>
-<span class="k">        </span><span class="kt">integer</span><span class="p">,</span><span class="k">public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">dtype</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="c">! no type</span>
-<span class="w">        </span><span class="kt">integer</span><span class="p">,</span><span class="k">public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="c">! elements in column</span>
+
+<span class="k">        </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">dtype</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="c">! no type</span>
+<span class="w">        </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="c">! elements in column</span>
 
 <span class="w">        </span><span class="c">! arrays to hold data</span>
 <span class="w">        </span><span class="c">! only one (associated with dtype) will ever be allocated</span>
-<span class="w">        </span><span class="kt">real</span><span class="p">(</span><span class="n">rk</span><span class="p">),</span><span class="k">dimension</span><span class="p">(:),</span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">rcol</span>
-<span class="w">        </span><span class="kt">integer</span><span class="p">(</span><span class="n">ik</span><span class="p">),</span><span class="k">dimension</span><span class="p">(:),</span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">icol</span>
-<span class="w">        </span><span class="kt">logical</span><span class="p">,</span><span class="k">dimension</span><span class="p">(:),</span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">lcol</span>
-<span class="w">        </span><span class="kt">character</span><span class="p">(</span><span class="nb">len</span><span class="o">=</span><span class="p">:),</span><span class="k">dimension</span><span class="p">(:),</span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">charcol</span>
-<span class="w">        </span><span class="kt">complex</span><span class="p">(</span><span class="n">rk</span><span class="p">),</span><span class="k">dimension</span><span class="p">(:),</span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">ccol</span>
+<span class="w">        </span><span class="kt">real</span><span class="p">(</span><span class="n">rk</span><span class="p">),</span><span class="w"> </span><span class="k">dimension</span><span class="p">(:),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">rcol</span>
+<span class="w">        </span><span class="kt">integer</span><span class="p">(</span><span class="n">ik</span><span class="p">),</span><span class="w"> </span><span class="k">dimension</span><span class="p">(:),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">icol</span>
+<span class="w">        </span><span class="kt">logical</span><span class="p">,</span><span class="w"> </span><span class="k">dimension</span><span class="p">(:),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">lcol</span>
+<span class="w">        </span><span class="kt">character</span><span class="p">(</span><span class="nb">len</span><span class="o">=</span><span class="p">:),</span><span class="w"> </span><span class="k">dimension</span><span class="p">(:),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">charcol</span>
+<span class="w">        </span><span class="kt">complex</span><span class="p">(</span><span class="n">rk</span><span class="p">),</span><span class="w"> </span><span class="k">dimension</span><span class="p">(:),</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">ccol</span>
 
 <span class="w">        </span><span class="kt">logical</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">initialized</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">false</span><span class="p">.</span>
-<span class="w">    </span>
+
 <span class="w">    </span><span class="k">contains</span>
 <span class="k">        private</span>
 
 <span class="w">        </span><span class="c">! empty constructors</span>
-<span class="w">        </span><span class="k">procedure</span><span class="p">,</span><span class="k">public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">emptyr</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">col_constructor_alloc_real</span>
-<span class="w">        </span><span class="k">procedure</span><span class="p">,</span><span class="k">public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">emptyi</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">col_constructor_alloc_integer</span>
-<span class="w">        </span><span class="k">procedure</span><span class="p">,</span><span class="k">public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">emptyl</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">col_constructor_alloc_logical</span>
-<span class="w">        </span><span class="k">procedure</span><span class="p">,</span><span class="k">public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">emptych</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">col_constructor_alloc_character</span>
-<span class="w">        </span><span class="k">procedure</span><span class="p">,</span><span class="k">public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">emptyc</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">col_constructor_alloc_complex</span>
-<span class="w">        </span>
+<span class="w">        </span><span class="k">procedure</span><span class="p">,</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">emptyr</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">col_constructor_alloc_real</span>
+<span class="w">        </span><span class="k">procedure</span><span class="p">,</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">emptyi</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">col_constructor_alloc_integer</span>
+<span class="w">        </span><span class="k">procedure</span><span class="p">,</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">emptyl</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">col_constructor_alloc_logical</span>
+<span class="w">        </span><span class="k">procedure</span><span class="p">,</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">emptych</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">col_constructor_alloc_character</span>
+<span class="w">        </span><span class="k">procedure</span><span class="p">,</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">emptyc</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">col_constructor_alloc_complex</span>
+
 <span class="w">        </span><span class="c">! constructor/setter combo</span>
-<span class="w">        </span><span class="k">procedure</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">col_constructor_real</span><span class="p">,</span><span class="w">       </span><span class="p">&amp;</span>
-<span class="w">                     </span><span class="n">col_constructor_integer</span><span class="p">,</span><span class="w">    </span><span class="p">&amp;</span>
-<span class="w">                     </span><span class="n">col_constructor_logical</span><span class="p">,</span><span class="w">    </span><span class="p">&amp;</span>
-<span class="w">                     </span><span class="n">col_constructor_character</span><span class="p">,</span><span class="w">  </span><span class="p">&amp;</span>
-<span class="w">                     </span><span class="n">col_constructor_complex</span>
-<span class="w">        </span><span class="k">generic</span><span class="p">,</span><span class="k">public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">new</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">col_constructor_real</span><span class="p">,</span><span class="w">          </span><span class="p">&amp;</span>
-<span class="w">                                 </span><span class="n">col_constructor_integer</span><span class="p">,</span><span class="w">       </span><span class="p">&amp;</span>
-<span class="w">                                 </span><span class="n">col_constructor_logical</span><span class="p">,</span><span class="w">       </span><span class="p">&amp;</span>
-<span class="w">                                 </span><span class="n">col_constructor_character</span><span class="p">,</span><span class="w">     </span><span class="p">&amp;</span>
-<span class="w">                                 </span><span class="n">col_constructor_complex</span>
+<span class="w">        </span><span class="k">procedure</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">col_constructor_real</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">            </span><span class="n">col_constructor_integer</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">            </span><span class="n">col_constructor_logical</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">            </span><span class="n">col_constructor_character</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">            </span><span class="n">col_constructor_complex</span>
+<span class="w">        </span><span class="k">generic</span><span class="p">,</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">new</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">col_constructor_real</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">            </span><span class="n">col_constructor_integer</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">            </span><span class="n">col_constructor_logical</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">            </span><span class="n">col_constructor_character</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">            </span><span class="n">col_constructor_complex</span>
 <span class="w">        </span><span class="c">! destructor</span>
-<span class="w">        </span><span class="k">procedure</span><span class="p">,</span><span class="k">public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">destroy</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">col_destructor</span>
+<span class="w">        </span><span class="k">procedure</span><span class="p">,</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">destroy</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">col_destructor</span>
 
 <span class="w">        </span><span class="c">! get data type</span>
-<span class="w">        </span><span class="k">procedure</span><span class="p">,</span><span class="k">public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">get_type</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">get_from_col_dtype</span>
+<span class="w">        </span><span class="k">procedure</span><span class="p">,</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">get_type</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">get_from_col_dtype</span>
 
 <span class="w">        </span><span class="c">! get either whole column as array or single value</span>
-<span class="w">        </span><span class="k">procedure</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">get_from_col_real</span><span class="p">,</span><span class="w">         </span><span class="p">&amp;</span>
-<span class="w">                     </span><span class="n">get_from_col_integer</span><span class="p">,</span><span class="w">      </span><span class="p">&amp;</span>
-<span class="w">                     </span><span class="n">get_from_col_logical</span><span class="p">,</span><span class="w">      </span><span class="p">&amp;</span>
-<span class="w">                     </span><span class="n">get_from_col_character</span><span class="p">,</span><span class="w">    </span><span class="p">&amp;</span>
-<span class="w">                     </span><span class="n">get_from_col_complex</span>
-<span class="w">        </span><span class="k">procedure</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">get_single_col_real</span><span class="p">,</span><span class="w">       </span><span class="p">&amp;</span>
-<span class="w">                     </span><span class="n">get_single_col_integer</span><span class="p">,</span><span class="w">    </span><span class="p">&amp;</span>
-<span class="w">                     </span><span class="n">get_single_col_logical</span><span class="p">,</span><span class="w">    </span><span class="p">&amp;</span>
-<span class="w">                     </span><span class="n">get_single_col_character</span><span class="p">,</span><span class="w">  </span><span class="p">&amp;</span>
-<span class="w">                     </span><span class="n">get_single_col_complex</span>
-<span class="w">        </span><span class="k">generic</span><span class="p">,</span><span class="k">public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">getr</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">get_from_col_real</span><span class="p">,</span><span class="w"> </span><span class="n">get_single_col_real</span>
-<span class="w">        </span><span class="k">generic</span><span class="p">,</span><span class="k">public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">geti</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">get_from_col_integer</span><span class="p">,</span><span class="w"> </span><span class="n">get_single_col_integer</span>
-<span class="w">        </span><span class="k">generic</span><span class="p">,</span><span class="k">public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">getl</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">get_from_col_logical</span><span class="p">,</span><span class="w"> </span><span class="n">get_single_col_logical</span>
-<span class="w">        </span><span class="k">generic</span><span class="p">,</span><span class="k">public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">getch</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">get_from_col_character</span><span class="p">,</span><span class="w"> </span><span class="n">get_single_col_character</span>
-<span class="w">        </span><span class="k">generic</span><span class="p">,</span><span class="k">public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">getc</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">get_from_col_complex</span><span class="p">,</span><span class="w"> </span><span class="n">get_single_col_complex</span>
-<span class="w">        </span>
+<span class="w">        </span><span class="k">procedure</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">get_from_col_real</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">            </span><span class="n">get_from_col_integer</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">            </span><span class="n">get_from_col_logical</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">            </span><span class="n">get_from_col_character</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">            </span><span class="n">get_from_col_complex</span>
+<span class="w">        </span><span class="k">procedure</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">get_single_col_real</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">            </span><span class="n">get_single_col_integer</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">            </span><span class="n">get_single_col_logical</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">            </span><span class="n">get_single_col_character</span><span class="p">,</span><span class="w"> </span><span class="p">&amp;</span>
+<span class="w">            </span><span class="n">get_single_col_complex</span>
+<span class="w">        </span><span class="k">generic</span><span class="p">,</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">getr</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">get_from_col_real</span><span class="p">,</span><span class="w"> </span><span class="n">get_single_col_real</span>
+<span class="w">        </span><span class="k">generic</span><span class="p">,</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">geti</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">get_from_col_integer</span><span class="p">,</span><span class="w"> </span><span class="n">get_single_col_integer</span>
+<span class="w">        </span><span class="k">generic</span><span class="p">,</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">getl</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">get_from_col_logical</span><span class="p">,</span><span class="w"> </span><span class="n">get_single_col_logical</span>
+<span class="w">        </span><span class="k">generic</span><span class="p">,</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">getch</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">get_from_col_character</span><span class="p">,</span><span class="w"> </span><span class="n">get_single_col_character</span>
+<span class="w">        </span><span class="k">generic</span><span class="p">,</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">getc</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">get_from_col_complex</span><span class="p">,</span><span class="w"> </span><span class="n">get_single_col_complex</span>
+
 <span class="w">        </span><span class="c">! Give element new value (setter)</span>
-<span class="w">        </span><span class="k">procedure</span><span class="p">,</span><span class="k">public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">changer</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">change_col_real</span>
-<span class="w">        </span><span class="k">procedure</span><span class="p">,</span><span class="k">public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">changei</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">change_col_integer</span>
-<span class="w">        </span><span class="k">procedure</span><span class="p">,</span><span class="k">public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">changel</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">change_col_logical</span>
-<span class="w">        </span><span class="k">procedure</span><span class="p">,</span><span class="k">public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">changech</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">change_col_character</span>
-<span class="w">        </span><span class="k">procedure</span><span class="p">,</span><span class="k">public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">changec</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">change_col_complex</span>
+<span class="w">        </span><span class="k">procedure</span><span class="p">,</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">changer</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">change_col_real</span>
+<span class="w">        </span><span class="k">procedure</span><span class="p">,</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">changei</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">change_col_integer</span>
+<span class="w">        </span><span class="k">procedure</span><span class="p">,</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">changel</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">change_col_logical</span>
+<span class="w">        </span><span class="k">procedure</span><span class="p">,</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">changech</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">change_col_character</span>
+<span class="w">        </span><span class="k">procedure</span><span class="p">,</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">changec</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">change_col_complex</span>
 
 <span class="w">    </span><span class="k">end type </span><span class="n">column</span>
 </pre></div>
@@ -3248,7 +3248,7 @@
             <p class="text-end">
               Documentation generated by
               <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
- on 2025-09-29 23:14 -0400             </p>
+ on 2025-10-01 06:54 -0400             </p>
           </div>
         </div>
         <br>

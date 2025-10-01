@@ -16,30 +16,30 @@ program test_row_functions
 
     ! Create dataframe
     call df % new()
-    call df % append(col1, "A")
-    call df % append(col2, "B")
-    call df % append(col3, "C")
+    call df_append_real(df, col1, "A")
+    call df_append_real(df, col2, "B")
+    call df_append_integer(df, col3, "C")
 
     print *, ""
     print *, "Testing Row Functions"
     print *, "====================="
     print *, ""
     print *, "Original DataFrame:"
-    call df % write_console()
+    call df_write_console(df)
     print *
 
     ! Apply function to single row
     print *, "Test 1: Apply to single row"
     print *, "----------------------------"
-    row_result = df % apply_to_row_real(3, row_sum)
+    row_result = df_apply_to_row_real(df, 3, row_sum)
     print *, "Row 3 sum:", row_result
     call assert_real(row_result, 333.0_rk, "Row 3 sum", num_failed)
 
-    row_result = df % apply_to_row_real(3, row_mean)
+    row_result = df_apply_to_row_real(df, 3, row_mean)
     print *, "Row 3 mean:", row_result
     call assert_real(row_result, 111.0_rk, "Row 3 mean", num_failed)
 
-    row_result = df % apply_to_row_real(3, row_max)
+    row_result = df_apply_to_row_real(df, 3, row_max)
     print *, "Row 3 max:", row_result
     call assert_real(row_result, 300.0_rk, "Row 3 max", num_failed)
     print *
@@ -47,7 +47,7 @@ program test_row_functions
     ! Apply function to all rows
     print *, "Test 2: Apply to all rows (sum)"
     print *, "--------------------------------"
-    all_results = df % apply_to_all_rows_real(row_sum)
+    all_results = df_apply_to_all_rows_real(df, row_sum)
     do i = 1, size(all_results)
         print *, "  Row", i, ":", all_results(i)
     end do
@@ -60,7 +60,7 @@ program test_row_functions
 
     print *, "Test 3: Apply to all rows (mean)"
     print *, "---------------------------------"
-    all_results = df % apply_to_all_rows_real(row_mean)
+    all_results = df_apply_to_all_rows_real(df, row_mean)
     do i = 1, size(all_results)
         print *, "  Row", i, ":", all_results(i)
     end do

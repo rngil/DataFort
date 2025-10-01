@@ -89,17 +89,17 @@ program example
 
     ! Create and populate
     call df%new()
-    call df%append(temps, "Temperature")
-    call df%append(pressures, "Pressure")
+    call df_append_real(df, temps, "Temperature")
+    call df_append_integer(df, pressures, "Pressure")
 
     ! Display
-    call df%write_console()
+    call df_write_console(df)
 
     ! Statistics
-    print*, "Mean temperature:", df%mean_real(1)
+    print*, "Mean temperature:", df_mean_real(df, 1)
 
     ! Export
-    call df%write_csv("data.csv")
+    call df_write_csv(df, "data.csv")
 
     ! Cleanup
     call df%destroy()

@@ -54,21 +54,21 @@ contains
         write (*, *) "Testing statistical functions..."
 
         call df % new()
-        call df % append(temps, "Temperature")
-        call df % append(scores, "Score")
+        call df_append_real(df, temps, "Temperature")
+        call df_append_integer(df, scores, "Score")
 
         ! Test median functions
-        call assert_approx_equal(df % median_real(1), 25.0_rk, 0.01_rk, "Real median")
-        call assert_approx_equal(df % median_integer(2), 80.0_rk, 0.01_rk, "Integer median")
+        call assert_approx_equal(df_median_real(df, 1), 25.0_rk, 0.01_rk, "Real median")
+        call assert_approx_equal(df_median_integer(df, 2), 80.0_rk, 0.01_rk, "Integer median")
 
         ! Test percentile functions
-        call assert_approx_equal(df % percentile_real(1, 50.0_rk), 25.0_rk, 0.01_rk, "Real 50th percentile")
-        call assert_approx_equal(df % percentile_real(1, 25.0_rk), 20.0_rk, 1.0_rk, "Real 25th percentile")
-        call assert_approx_equal(df % percentile_integer(2, 75.0_rk), 90.0_rk, 1.0_rk, "Integer 75th percentile")
+        call assert_approx_equal(df_percentile_real(df, 1, 50.0_rk), 25.0_rk, 0.01_rk, "Real 50th percentile")
+        call assert_approx_equal(df_percentile_real(df, 1, 25.0_rk), 20.0_rk, 1.0_rk, "Real 25th percentile")
+        call assert_approx_equal(df_percentile_integer(df, 2, 75.0_rk), 90.0_rk, 1.0_rk, "Integer 75th percentile")
 
         ! Test variance functions
-        call assert_approx_equal(df % variance_real(1), 62.5_rk, 1.0_rk, "Real variance")
-        call assert_approx_equal(df % variance_integer(2), 250.0_rk, 1.0_rk, "Integer variance")
+        call assert_approx_equal(df_variance_real(df, 1), 62.5_rk, 1.0_rk, "Real variance")
+        call assert_approx_equal(df_variance_integer(df, 2), 250.0_rk, 1.0_rk, "Integer variance")
 
         call df % destroy()
     end subroutine
@@ -83,24 +83,24 @@ contains
         write (*, *) "Testing column manipulation..."
 
         call df % new()
-        call df % append(temps, "Temperature")
-        call df % append(humidity, "Humidity")
-        call df % append(locations, "Location")
+        call df_append_real(df, temps, "Temperature")
+        call df_append_integer(df, humidity, "Humidity")
+        call df_append_character(df, locations, "Location")
 
         ! Test renaming
-        call df % rename_column(1, "Temp_C")
+        call df_rename_column(df, 1, "Temp_C")
         call assert_true(df % header(1) == "Temp_C", "Column rename")
 
         ! Test reordering
         call assert_true(df % header(1) == "Temp_C", "Before reorder - first column")
         call assert_true(df % header(2) == "Humidity", "Before reorder - second column")
 
-        call df % reorder_columns(new_order)
+        call df_reorder_columns(df, new_order)
         call assert_true(df % header(1) == "Humidity", "After reorder - first column")
         call assert_true(df % header(2) == "Temp_C", "After reorder - second column")
 
         ! Test dropping
-        call df % drop_column(1)  ! Remove humidity (now first column)
+        call df_drop_column(df, 1)  ! Remove humidity (now first column)
         call assert_true(df % ncols() == 2, "Column count after drop")
         call assert_true(df % header(1) == "Temp_C", "First column after drop")
 
@@ -116,26 +116,26 @@ contains
         write (*, *) "Testing advanced filtering..."
 
         call df % new()
-        call df % append(temps, "Temperature")
-        call df % append(scores, "Score")
-        call df % append(cities, "City")
+        call df_append_real(df, temps, "Temperature")
+        call df_append_integer(df, scores, "Score")
+        call df_append_character(df, cities, "City")
 
         ! Test real range filtering
-        filtered_df = df % filter_rows_real_range(1, 20.0_rk, 30.0_rk)
+        filtered_df = df_filter_rows_real_range(df, 1, 20.0_rk, 30.0_rk)
         call assert_true(filtered_df % nrows() == 3, "Real range filter row count")
-        call assert_approx_equal(filtered_df % get_val_real(1, 1), 20.0_rk, 0.01_rk, "Real range filter first value")
+        call assert_approx_equal(df_get_val_real(filtered_df, 1, 1), 20.0_rk, 0.01_rk, "Real range filter first value")
 
         call filtered_df % destroy()
 
         ! Test integer range filtering
-        filtered_df = df % filter_rows_integer_range(2, 75_ik, 95_ik)
+        filtered_df = df_filter_rows_integer_range(df, 2, 75_ik, 95_ik)
         call assert_true(filtered_df % nrows() == 2, "Integer range filter row count")
-        call assert_true(filtered_df % get_val_integer(2, 1) == 80_ik, "Integer range filter first value")
+        call assert_true(df_get_val_integer(filtered_df, 1, 2) == 80_ik, "Integer range filter first value")
 
         call filtered_df % destroy()
 
         ! Test string pattern filtering
-        filtered_df = df % filter_rows_string_pattern(3, "i")  ! Cities containing "i"
+        filtered_df = df_filter_rows_string_pattern(df, 3, "i")  ! Cities containing "i"
         call assert_true(filtered_df % nrows() == 3, "String pattern filter row count")  ! Chicago, Miami, Phoenix
 
         call filtered_df % destroy()
@@ -150,10 +150,10 @@ contains
         write (*, *) "Testing transpose..."
 
         call df % new()
-        call df % append(temps, "Temperature")
-        call df % append(humidity, "Humidity")
+        call df_append_real(df, temps, "Temperature")
+        call df_append_integer(df, humidity, "Humidity")
 
-        transposed_df = df % transpose()
+        transposed_df = df_transpose(df)
 
         ! In transpose: columns become rows, so we should have 3 columns (Headers, Row_1, Row_2)
         ! and 2 rows (Temperature, Humidity)

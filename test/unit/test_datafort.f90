@@ -84,11 +84,11 @@ contains
         call assert_true(df % nrows() == 0, "Initial row count")
 
         ! Add columns
-        call df % append(real_col)
+        call df_append_real(df, real_col)
         call assert_true(df % ncols() == 1, "Column addition")
         call assert_true(df % nrows() == 3, "Row count after first column")
 
-        call df % append(int_col)
+        call df_append_integer(df, int_col)
         call assert_true(df % ncols() == 2, "Second column addition")
         call assert_true(df % nrows() == 3, "Row count after second column")
 
@@ -105,8 +105,8 @@ contains
         call df % new()
 
         ! Add columns with headers
-        call df % append(real_col, "real_data")
-        call df % append(int_col, "int_data")
+        call df_append_real(df, real_col, "real_data")
+        call df_append_integer(df, int_col, "int_data")
 
         call assert_true(df % header(1) == "real_data", "First header retrieval")
         call assert_true(df % header(2) == "int_data", "Second header retrieval")
@@ -125,10 +125,10 @@ contains
 
         call df % new()
 
-        call df % append(real_col, "reals")
-        call df % append(int_col, "ints")
-        call df % append(logical_col, "logicals")
-        call df % append(char_col, "chars")
+        call df_append_real(df, real_col, "reals")
+        call df_append_integer(df, int_col, "ints")
+        call df_append_logical(df, logical_col, "logicals")
+        call df_append_character(df, char_col, "chars")
 
         call assert_true(df % ncols() == 4, "Mixed type column count")
         call assert_true(df % dtype("reals") == REAL_NUM, "Real column type")

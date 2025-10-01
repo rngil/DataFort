@@ -48,13 +48,13 @@ document.addEventListener('DOMContentLoaded', function() {
 ### Load CSV with Headers
 ```fortran
 type(data_frame) :: df
-call df%read_csv("data.csv", .true.)  ! .true. = has headers
-call df%write_console()
+call df_read_csv(df, "data.csv", .true.)  ! .true. = has headers
+call df_write_console(df)
 ```
 
 ### Write to CSV
 ```fortran
-call df%write_csv("output.csv")
+call df_write_csv(df, "output.csv")
 ```
 
 ---
@@ -64,17 +64,17 @@ call df%write_csv("output.csv")
 ### Display First/Last Rows
 ```fortran
 type(data_frame) :: head_df, tail_df
-head_df = df%head(5)     ! First 5 rows
-tail_df = df%tail(10)    ! Last 10 rows
-call head_df%write_console()
+head_df = df_head(df, 5)     ! First 5 rows
+tail_df = df_tail(df, 10)    ! Last 10 rows
+call df_write_console(head_df)
 ```
 
 ### Get DataFrame Info
 ```fortran
-call df%info()           ! Print structure and types
-call df%describe_numeric()  ! Statistical summary
+call df_info(df)           ! Print structure and types
+call df_describe_numeric(df)  ! Statistical summary
 
-print*, "Shape:", df%shape()
+print*, "Shape:", df_shape(df)
 print*, "Rows:", df%nrows()
 print*, "Cols:", df%ncols()
 ```
@@ -89,13 +89,13 @@ character(len=:), allocatable :: value_c
 logical :: value_l
 
 ! Get value at row i, column j (by index)
-call df%get_val_real(j, i, value_r)       ! For real columns
-call df%get_val_integer(j, i, value_i)    ! For integer columns
-call df%get_val_character(j, i, value_c)  ! For character columns
-call df%get_val_logical(j, i, value_l)    ! For logical columns
+call df_get_val_real(df, i, j, value_r)       ! For real columns
+call df_get_val_integer(df, i, j, value_i)    ! For integer columns
+call df_get_val_character(df, i, j, value_c)  ! For character columns
+call df_get_val_logical(df, i, j, value_l)    ! For logical columns
 
 ! Example: Get value at row 5, column 2
-call df%get_val_real(2, 5, value_r)
+call df_get_val_real(df, 5, 2, value_r)
 print*, "Value at [5,2]:", value_r
 ```
 
@@ -112,20 +112,20 @@ col_name = "Temperature"
 col_idx = df%find_header_index(col_name)
 
 ! Then get the value
-call df%get_val_real(col_idx, row_idx, temperature)
+call df_get_val_real(df, row_idx, col_idx, temperature)
 print*, "Temperature at row", row_idx, ":", temperature
 ```
 
 #### Set a Single Value
 ```fortran
 ! Set value at row i, column j
-call df%set_val_real(j, i, 42.5_rk)        ! For real columns
-call df%set_val_integer(j, i, 100_ik)      ! For integer columns
-call df%set_val_character(j, i, "NewVal")  ! For character columns
-call df%set_val_logical(j, i, .true.)      ! For logical columns
+call df_set_val_real(df, i, j, 42.5_rk)        ! For real columns
+call df_set_val_integer(df, i, j, 100_ik)      ! For integer columns
+call df_set_val_character(df, i, j, "NewVal")  ! For character columns
+call df_set_val_logical(df, i, j, .true.)      ! For logical columns
 
 ! Example: Set value at row 3, column 1
-call df%set_val_real(1, 3, 99.9_rk)
+call df_set_val_real(df, 3, 1, 99.9_rk)
 ```
 
 #### Access by Header Name
@@ -139,7 +139,7 @@ col_index = df%find_header_index(header)
 
 if (col_index > 0) then
     ! Use the column index to access data
-    call df%get_val_integer(col_index, 5, value_i)
+    call df_get_val_integer(df, 5, col_index, value_i)
     print*, "Age at row 5:", value_i
 else
     print*, "Column not found"
@@ -154,13 +154,13 @@ end if
 ```fortran
 type(data_frame) :: subset
 integer, dimension(3) :: cols = [1, 3, 5]
-subset = df%select_columns(cols)
+subset = df_select_columns(df, cols)
 ```
 
 ### Slice Rows
 ```fortran
 type(data_frame) :: sliced
-sliced = df%slice_rows(10, 20)  ! Rows 10 to 20
+sliced = df_slice_rows(df, 10, 20)  ! Rows 10 to 20
 ```
 
 ### Filter by Condition
@@ -169,15 +169,15 @@ type(data_frame) :: filtered
 logical, dimension(:), allocatable :: mask
 
 ! Filter numeric range
-filtered = df%filter_rows_real_range(1, 20.0_rk, 30.0_rk)
+filtered = df_filter_rows_real_range(df, 1, 20.0_rk, 30.0_rk)
 
 ! Filter by string pattern
-filtered = df%filter_rows_string_pattern(2, "Alice")
+filtered = df_filter_rows_string_pattern(df, 2, "Alice")
 
 ! Custom logical mask
 allocate(mask(df%nrows()))
 mask = temperatures > 25.0_rk
-filtered = df%filter_rows_logical(mask)
+filtered = df_filter_rows_logical(df, mask)
 ```
 
 ---
@@ -190,10 +190,10 @@ real(rk) :: avg, std_dev, var
 integer(ik) :: total
 
 ! Column 1 statistics
-avg = df%mean_real(1)
-std_dev = df%std_real(1)
-var = df%variance_real(1)
-total = df%sum_integer(2)
+avg = df_mean_real(df, 1)
+std_dev = df_std_real(df, 1)
+var = df_variance_real(df, 1)
+total = df_sum_integer(df, 2)
 
 print*, "Mean:", avg
 print*, "Std Dev:", std_dev
@@ -203,9 +203,9 @@ print*, "Std Dev:", std_dev
 ```fortran
 real(rk) :: median, q25, q75
 
-median = df%median_real(1)
-q25 = df%percentile_real(1, 25.0_rk)
-q75 = df%percentile_real(1, 75.0_rk)
+median = df_median_real(df, 1)
+q25 = df_percentile_real(df, 1, 25.0_rk)
+q75 = df_percentile_real(df, 1, 75.0_rk)
 
 print*, "Median:", median
 print*, "IQR:", q75 - q25
@@ -214,7 +214,7 @@ print*, "IQR:", q75 - q25
 ### Correlation
 ```fortran
 real(rk) :: corr
-corr = df%correlation_real(1, 2)  ! Between columns 1 and 2
+corr = df_correlation_real(df, 1, 2)  ! Between columns 1 and 2
 print*, "Correlation:", corr
 ```
 
@@ -224,31 +224,31 @@ print*, "Correlation:", corr
 
 ### Normalize Data
 ```fortran
-call df%normalize_column_real(1)  ! Scale to [0, 1]
+call df_normalize_column_real(df, 1)  ! Scale to [0, 1]
 ```
 
 ### Standardize Data
 ```fortran
-call df%standardize_column_real(1)  ! z-score normalization
+call df_standardize_column_real(df, 1)  ! z-score normalization
 ```
 
 ### Mathematical Operations
 ```fortran
 ! Apply functions to entire columns
-call df%abs_column_real(1)
-call df%log_column(1)
-call df%exp_column(1)
-call df%sqrt_column(1)
-call df%pow_column(1, 2.0_rk)  ! Raise to power
-call df%round_column(1, 2)     ! Round to 2 decimals
+call df_abs_column_real(df, 1)
+call df_log_column(df, 1)
+call df_exp_column(df, 1)
+call df_sqrt_column(df, 1)
+call df_pow_column(df, 1, 2.0_rk)  ! Raise to power
+call df_round_column(df, 1, 2)     ! Round to 2 decimals
 ```
 
 ### Cumulative and Differencing
 ```fortran
 real(rk), dimension(:), allocatable :: cumulative, differences
 
-cumulative = df%cumsum_real(1)
-differences = df%diff_real(1)
+cumulative = df_cumsum_real(df, 1)
+differences = df_diff_real(df, 1)
 ```
 
 ---
@@ -257,19 +257,19 @@ differences = df%diff_real(1)
 
 ### Sort by Column
 ```fortran
-call df%sort_by_column(1, ascending=.true.)
+call df_sort_by_column(df, 1, ascending=.true.)
 ```
 
 ### Get Ranks
 ```fortran
 real(rk), dimension(:), allocatable :: ranks
-ranks = df%rank_real(1)
+ranks = df_rank_real(df, 1)
 ```
 
 ### Check if Sorted
 ```fortran
 logical :: sorted
-sorted = df%is_sorted_real(1)
+sorted = df_is_sorted_real(df, 1)
 ```
 
 ---
@@ -279,7 +279,7 @@ sorted = df%is_sorted_real(1)
 ### Check for Missing Values
 ```fortran
 logical, dimension(:), allocatable :: na_mask
-na_mask = df%isna_real(1)
+na_mask = df_isna_real(df, 1)
 
 ! Count missing values
 print*, "Missing values:", count(na_mask)
@@ -287,13 +287,13 @@ print*, "Missing values:", count(na_mask)
 
 ### Fill Missing Values
 ```fortran
-call df%fillna_real(1, 0.0_rk)  ! Fill with 0
+call df_fillna_real(df, 1, 0.0_rk)  ! Fill with 0
 ```
 
 ### Drop Missing Values
 ```fortran
 type(data_frame) :: cleaned
-cleaned = df%dropna()
+cleaned = df_dropna(df)
 ```
 
 ---
@@ -303,23 +303,23 @@ cleaned = df%dropna()
 ### Add Column
 ```fortran
 real(rk), dimension(100) :: new_data
-call df%append(new_data, "NewColumn")
+call df_append_real(df, new_data, "NewColumn")
 ```
 
 ### Drop Column
 ```fortran
-call df%drop_column(3)  ! Drop column 3
+call df_drop_column(df, 3)  ! Drop column 3
 ```
 
 ### Rename Column
 ```fortran
-call df%rename_column(1, "Temperature_C")
+call df_rename_column(df, 1, "Temperature_C")
 ```
 
 ### Reorder Columns
 ```fortran
 integer, dimension(4) :: new_order = [3, 1, 4, 2]
-call df%reorder_columns(new_order)
+call df_reorder_columns(df, new_order)
 ```
 
 ### Get Column Type
@@ -336,28 +336,30 @@ col_type = df%get_col_type(1)
 ### Inner Join
 ```fortran
 type(data_frame) :: df1, df2, result
-result = df1%inner_join(df2, 1, 1)  ! Join on column 1 of both
+result = df_inner_join(df1, df2, 1, 1)  ! Join on column 1 of both
 ```
 
 ### Left Join
 ```fortran
-result = df1%left_join(df2, 1, 1)
+result = df_left_join(df1, df2, 1, 1)
 ```
 
 ### Right Join
 ```fortran
-result = df1%right_join(df2, 1, 1)
+result = df_right_join(df1, df2, 1, 1)
 ```
 
 ### Outer Join
 ```fortran
-result = df1%outer_join(df2, 1, 1)
+result = df_outer_join(df1, df2, 1, 1)
 ```
 
 ### Concatenate DataFrames
 ```fortran
 type(data_frame) :: combined
-combined = df1%concat(df2)  ! Stack vertically
+integer :: axis
+axis = 0  ! 0 = vertical stacking, 1 = horizontal stacking
+combined = df_concat(df1, df2, axis)
 ```
 
 ---
@@ -367,26 +369,26 @@ combined = df1%concat(df2)  ! Stack vertically
 ### Find Duplicates
 ```fortran
 logical, dimension(:), allocatable :: is_dup
-is_dup = df%duplicated(1)  ! Check column 1
+is_dup = df_duplicated(df)  ! Check for duplicate rows
 ```
 
 ### Drop Duplicates
 ```fortran
 type(data_frame) :: unique_df
-unique_df = df%drop_duplicates(1)  ! Based on column 1
+unique_df = df_drop_duplicates(df)  ! Remove duplicate rows
 ```
 
 ### Get Unique Values
 ```fortran
 real(rk), dimension(:), allocatable :: unique_vals
-unique_vals = df%unique_real(1)
+unique_vals = df_unique_real(df, 1)
 ```
 
 ### Value Counts
 ```fortran
 type(data_frame) :: counts
-counts = df%value_counts_real(1)
-call counts%write_console()
+counts = df_value_counts_real(df, 1)
+call df_write_console(counts)
 ```
 
 ---
@@ -406,13 +408,13 @@ end function row_sum
 
 ! Apply to a single row
 real(rk) :: result
-result = df%apply_to_row_real(5, row_sum)  ! Apply to row 5
+result = df_apply_to_row_real(df, 5, row_sum)  ! Apply to row 5
 ```
 
 ### Apply Function to All Rows
 ```fortran
 real(rk), dimension(:), allocatable :: results
-results = df%apply_to_all_rows_real(row_sum)  ! Apply to all rows
+results = df_apply_to_all_rows_real(df, row_sum)  ! Apply to all rows
 ```
 
 ---
@@ -422,29 +424,29 @@ results = df%apply_to_all_rows_real(row_sum)  ! Apply to all rows
 ### Transpose
 ```fortran
 type(data_frame) :: transposed
-transposed = df%transpose()
+transposed = df_transpose(df)
 ```
 
 ### Sample Rows
 ```fortran
 type(data_frame) :: sample_df
-sample_df = df%sample(10)  ! Random 10 rows
+sample_df = df_sample(df, 10)  ! Random 10 rows
 ```
 
 ### Shuffle
 ```fortran
-call df%shuffle()  ! Randomize row order
+call df_shuffle(df)  ! Randomize row order
 ```
 
 ### Copy
 ```fortran
 type(data_frame) :: df_copy
-df_copy = df%copy()
+df_copy = df_copy(df)
 ```
 
 ### Clear
 ```fortran
-call df%clear()  ! Empty the dataframe
+call df_clear(df)  ! Empty the dataframe
 ```
 
 ---
@@ -463,26 +465,26 @@ program datafort_example
 
     ! Create dataframe
     call df%new()
-    call df%append(ids, "ID")
-    call df%append(temps, "Temperature")
+    call df_append_integer(df, ids, "ID")
+    call df_append_real(df, temps, "Temperature")
 
     ! Basic info
-    call df%info()
-    call df%describe_numeric()
+    call df_info(df)
+    call df_describe_numeric(df)
 
     ! Statistics
-    print*, "Mean temp:", df%mean_real(2)
-    print*, "Max temp:", df%max_real(2)
+    print*, "Mean temp:", df_mean_real(df, 2)
+    print*, "Max temp:", df_max_real(df, 2)
 
     ! Filter
-    filtered = df%filter_rows_real_range(2, 24.0_rk, 26.0_rk)
-    call filtered%write_console()
+    filtered = df_filter_rows_real_range(df, 2, 24.0_rk, 26.0_rk)
+    call df_write_console(filtered)
 
     ! Transform
-    call df%normalize_column_real(2)
+    call df_normalize_column_real(df, 2)
 
     ! Export
-    call df%write_csv("output.csv")
+    call df_write_csv(df, "output.csv")
 
     ! Cleanup
     call df%destroy()

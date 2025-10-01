@@ -90,7 +90,7 @@
 
             <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
               <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
-                 title=" 2.6% of total for procedures.">95 statements</a>
+                 title=" 2.2% of total for procedures.">94 statements</a>
             </li>
 
         </ul>
@@ -98,7 +98,7 @@
       <div class="col">
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb justify-content-end mb-0">
-                <li class="breadcrumb-item"><a href='../module/datafort.html'>datafort</a></li>
+                <li class="breadcrumb-item"><a href='../module/datafort_io.html'>datafort_io</a></li>
             <li class="breadcrumb-item active" aria-current="page">add_csv_column</li>
           </ol>
         </nav>
@@ -156,6 +156,22 @@
 </h2>
     
 
+    <p>Add a column with automatic type detection</p>
+<p>Helper subroutine that detects the data type from string data and
+adds the appropriate typed column to the data frame.</p>
+<p>@param[in,out] df The data frame to add the column to
+@param[in] data_strings Array of string values to convert and add
+@param[in] headers Optional array of header names
+@param[in] col_index Index of the column being added
+@param[in] has_headers Whether the data frame has headers</p>
+<div class="alert alert-info">
+<p class="alert-title h4">Note</p>
+<p>Type detection priority: integer -&gt; real -&gt; logical -&gt; character</p>
+<div class="alert alert-info">
+<p class="alert-title h4">Note</p>
+</div>
+<p>NaN values are preserved for numeric types</p>
+</div>
 
 
     <h3>Arguments</h3>
@@ -171,8 +187,8 @@
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-df"></span>
-              class(<a href='../type/data_frame.html'>data_frame</a>),
+              <span class="anchor" id="variable-df~4"></span>
+              type(<a href='../type/data_frame.html'>data_frame</a>),
             </td>
 <td>intent(inout)</td>
               <td></td>            <td>
@@ -201,7 +217,7 @@
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-headers~3"></span>
+              <span class="anchor" id="variable-headers~2"></span>
               character(len=*),
             </td>
 <td>intent(in),</td>
@@ -216,7 +232,7 @@
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-col_index~28"></span>
+              <span class="anchor" id="variable-col_index"></span>
               integer,
             </td>
 <td>intent(in)</td>
@@ -231,7 +247,7 @@
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-has_headers~2"></span>
+              <span class="anchor" id="variable-has_headers~4"></span>
               logical,
             </td>
 <td>intent(in)</td>
@@ -262,7 +278,7 @@
     <section>
     <h2><span class="anchor" id="src"></span>Source Code</h2>
     <div class="hl codehilite"><pre><span></span><span class="w">    </span><span class="k">subroutine </span><span class="n">add_csv_column</span><span class="p">(</span><span class="n">df</span><span class="p">,</span><span class="w"> </span><span class="n">data_strings</span><span class="p">,</span><span class="w"> </span><span class="n">headers</span><span class="p">,</span><span class="w"> </span><span class="n">col_index</span><span class="p">,</span><span class="w"> </span><span class="n">has_headers</span><span class="p">)</span>
-<span class="w">        </span><span class="k">class</span><span class="p">(</span><span class="n">data_frame</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">df</span>
+<span class="w">        </span><span class="k">type</span><span class="p">(</span><span class="n">data_frame</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">df</span>
 <span class="w">        </span><span class="kt">character</span><span class="p">(</span><span class="nb">len</span><span class="o">=*</span><span class="p">),</span><span class="w"> </span><span class="k">dimension</span><span class="p">(:),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">data_strings</span>
 <span class="w">        </span><span class="kt">character</span><span class="p">(</span><span class="nb">len</span><span class="o">=*</span><span class="p">),</span><span class="w"> </span><span class="k">dimension</span><span class="p">(:),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">),</span><span class="w"> </span><span class="k">optional</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">headers</span>
 <span class="w">        </span><span class="kt">integer</span><span class="p">,</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">col_index</span>
@@ -274,7 +290,6 @@
 <span class="w">        </span><span class="kt">logical</span><span class="p">,</span><span class="w"> </span><span class="k">allocatable</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">logical_data</span><span class="p">(:)</span>
 <span class="w">        </span><span class="kt">real</span><span class="p">(</span><span class="n">rk</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">real_val</span>
 <span class="w">        </span><span class="kt">integer</span><span class="p">(</span><span class="n">ik</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">int_val</span>
-<span class="w">        </span><span class="kt">logical</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">logical_val</span>
 <span class="w">        </span><span class="kt">character</span><span class="p">(</span><span class="nb">len</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">trimmed_str</span>
 
 <span class="w">        </span><span class="c">! Initialize NaN constant if needed</span>
@@ -296,14 +311,14 @@
 <span class="k">            end if</span>
 
 <span class="w">            </span><span class="c">! Try integer first</span>
-<span class="w">            </span><span class="k">read</span><span class="p">(</span><span class="n">data_strings</span><span class="p">(</span><span class="n">i</span><span class="p">),</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="n">iostat</span><span class="o">=</span><span class="n">iostat</span><span class="p">)</span><span class="w"> </span><span class="n">int_val</span>
+<span class="w">            </span><span class="k">read</span><span class="w"> </span><span class="p">(</span><span class="n">data_strings</span><span class="p">(</span><span class="n">i</span><span class="p">),</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="n">iostat</span><span class="o">=</span><span class="n">iostat</span><span class="p">)</span><span class="w"> </span><span class="n">int_val</span>
 <span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">iostat</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
 <span class="k">                </span><span class="n">data_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">INTEGER_NUM</span>
 <span class="w">                </span><span class="k">exit</span>
 <span class="k">            end if</span>
 
 <span class="w">            </span><span class="c">! Try real</span>
-<span class="w">            </span><span class="k">read</span><span class="p">(</span><span class="n">data_strings</span><span class="p">(</span><span class="n">i</span><span class="p">),</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="n">iostat</span><span class="o">=</span><span class="n">iostat</span><span class="p">)</span><span class="w"> </span><span class="n">real_val</span>
+<span class="w">            </span><span class="k">read</span><span class="w"> </span><span class="p">(</span><span class="n">data_strings</span><span class="p">(</span><span class="n">i</span><span class="p">),</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="n">iostat</span><span class="o">=</span><span class="n">iostat</span><span class="p">)</span><span class="w"> </span><span class="n">real_val</span>
 <span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">iostat</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
 <span class="k">                </span><span class="n">data_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">REAL_NUM</span>
 <span class="w">                </span><span class="k">exit</span>
@@ -322,9 +337,9 @@
 <span class="k">        end do</span>
 
 <span class="w">        </span><span class="c">! Convert and add the column</span>
-<span class="w">        </span><span class="k">select case</span><span class="p">(</span><span class="n">data_type</span><span class="p">)</span>
-<span class="w">        </span><span class="k">case</span><span class="p">(</span><span class="n">INTEGER_NUM</span><span class="p">)</span>
-<span class="w">            </span><span class="k">allocate</span><span class="p">(</span><span class="n">int_data</span><span class="p">(</span><span class="n">size</span><span class="p">(</span><span class="n">data_strings</span><span class="p">)))</span>
+<span class="w">        </span><span class="k">select case</span><span class="w"> </span><span class="p">(</span><span class="n">data_type</span><span class="p">)</span>
+<span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="p">(</span><span class="n">INTEGER_NUM</span><span class="p">)</span>
+<span class="w">            </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">int_data</span><span class="p">(</span><span class="n">size</span><span class="p">(</span><span class="n">data_strings</span><span class="p">)))</span>
 <span class="w">            </span><span class="k">do </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="p">(</span><span class="n">data_strings</span><span class="p">)</span>
 <span class="w">                </span><span class="n">trimmed_str</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">trim</span><span class="p">(</span><span class="nb">adjustl</span><span class="p">(</span><span class="n">data_strings</span><span class="p">(</span><span class="n">i</span><span class="p">)))</span>
 
@@ -337,17 +352,17 @@
 <span class="w">                    </span><span class="n">trimmed_str</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">&quot;-&quot;</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
 <span class="k">                    </span><span class="n">int_data</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">NaN_ik</span>
 <span class="w">                </span><span class="k">else</span>
-<span class="k">                    read</span><span class="p">(</span><span class="n">data_strings</span><span class="p">(</span><span class="n">i</span><span class="p">),</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="n">iostat</span><span class="o">=</span><span class="n">iostat</span><span class="p">)</span><span class="w"> </span><span class="n">int_data</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+<span class="k">                    read</span><span class="w"> </span><span class="p">(</span><span class="n">data_strings</span><span class="p">(</span><span class="n">i</span><span class="p">),</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="n">iostat</span><span class="o">=</span><span class="n">iostat</span><span class="p">)</span><span class="w"> </span><span class="n">int_data</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
 <span class="w">                    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">iostat</span><span class="w"> </span><span class="o">/=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="n">int_data</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">NaN_ik</span><span class="w">  </span><span class="c">! Use NaN for invalid data</span>
 <span class="w">                </span><span class="k">end if</span>
 <span class="k">            end do</span>
 <span class="k">            if</span><span class="w"> </span><span class="p">(</span><span class="n">has_headers</span><span class="w"> </span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="w"> </span><span class="nb">present</span><span class="p">(</span><span class="n">headers</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
-<span class="k">                call </span><span class="n">df</span><span class="p">%</span><span class="n">append</span><span class="p">(</span><span class="n">int_data</span><span class="p">,</span><span class="w"> </span><span class="n">headers</span><span class="p">(</span><span class="n">col_index</span><span class="p">))</span>
+<span class="k">                call </span><span class="n">df_append_integer</span><span class="p">(</span><span class="n">df</span><span class="p">,</span><span class="w"> </span><span class="n">int_data</span><span class="p">,</span><span class="w"> </span><span class="n">headers</span><span class="p">(</span><span class="n">col_index</span><span class="p">))</span>
 <span class="w">            </span><span class="k">else</span>
-<span class="k">                call </span><span class="n">df</span><span class="p">%</span><span class="n">append</span><span class="p">(</span><span class="n">int_data</span><span class="p">)</span>
+<span class="k">                call </span><span class="n">df_append_integer</span><span class="p">(</span><span class="n">df</span><span class="p">,</span><span class="w"> </span><span class="n">int_data</span><span class="p">)</span>
 <span class="w">            </span><span class="k">end if</span>
-<span class="k">        case</span><span class="p">(</span><span class="n">REAL_NUM</span><span class="p">)</span>
-<span class="w">            </span><span class="k">allocate</span><span class="p">(</span><span class="n">real_data</span><span class="p">(</span><span class="n">size</span><span class="p">(</span><span class="n">data_strings</span><span class="p">)))</span>
+<span class="k">        case</span><span class="w"> </span><span class="p">(</span><span class="n">REAL_NUM</span><span class="p">)</span>
+<span class="w">            </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">real_data</span><span class="p">(</span><span class="n">size</span><span class="p">(</span><span class="n">data_strings</span><span class="p">)))</span>
 <span class="w">            </span><span class="k">do </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="p">(</span><span class="n">data_strings</span><span class="p">)</span>
 <span class="w">                </span><span class="n">trimmed_str</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">trim</span><span class="p">(</span><span class="nb">adjustl</span><span class="p">(</span><span class="n">data_strings</span><span class="p">(</span><span class="n">i</span><span class="p">)))</span>
 
@@ -360,37 +375,37 @@
 <span class="w">                    </span><span class="n">trimmed_str</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">&quot;-&quot;</span><span class="p">)</span><span class="w"> </span><span class="k">then</span>
 <span class="k">                    </span><span class="n">real_data</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">NaN_rk</span>
 <span class="w">                </span><span class="k">else</span>
-<span class="k">                    read</span><span class="p">(</span><span class="n">data_strings</span><span class="p">(</span><span class="n">i</span><span class="p">),</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="n">iostat</span><span class="o">=</span><span class="n">iostat</span><span class="p">)</span><span class="w"> </span><span class="n">real_data</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+<span class="k">                    read</span><span class="w"> </span><span class="p">(</span><span class="n">data_strings</span><span class="p">(</span><span class="n">i</span><span class="p">),</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="n">iostat</span><span class="o">=</span><span class="n">iostat</span><span class="p">)</span><span class="w"> </span><span class="n">real_data</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
 <span class="w">                    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">iostat</span><span class="w"> </span><span class="o">/=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="n">real_data</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">NaN_rk</span><span class="w">  </span><span class="c">! Use NaN for invalid data</span>
 <span class="w">                </span><span class="k">end if</span>
 <span class="k">            end do</span>
 <span class="k">            if</span><span class="w"> </span><span class="p">(</span><span class="n">has_headers</span><span class="w"> </span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="w"> </span><span class="nb">present</span><span class="p">(</span><span class="n">headers</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
-<span class="k">                call </span><span class="n">df</span><span class="p">%</span><span class="n">append</span><span class="p">(</span><span class="n">real_data</span><span class="p">,</span><span class="w"> </span><span class="n">headers</span><span class="p">(</span><span class="n">col_index</span><span class="p">))</span>
+<span class="k">                call </span><span class="n">df_append_real</span><span class="p">(</span><span class="n">df</span><span class="p">,</span><span class="w"> </span><span class="n">real_data</span><span class="p">,</span><span class="w"> </span><span class="n">headers</span><span class="p">(</span><span class="n">col_index</span><span class="p">))</span>
 <span class="w">            </span><span class="k">else</span>
-<span class="k">                call </span><span class="n">df</span><span class="p">%</span><span class="n">append</span><span class="p">(</span><span class="n">real_data</span><span class="p">)</span>
+<span class="k">                call </span><span class="n">df_append_real</span><span class="p">(</span><span class="n">df</span><span class="p">,</span><span class="w"> </span><span class="n">real_data</span><span class="p">)</span>
 <span class="w">            </span><span class="k">end if</span>
-<span class="k">        case</span><span class="p">(</span><span class="n">LOGICAL_NUM</span><span class="p">)</span>
-<span class="w">            </span><span class="k">allocate</span><span class="p">(</span><span class="n">logical_data</span><span class="p">(</span><span class="n">size</span><span class="p">(</span><span class="n">data_strings</span><span class="p">)))</span>
+<span class="k">        case</span><span class="w"> </span><span class="p">(</span><span class="n">LOGICAL_NUM</span><span class="p">)</span>
+<span class="w">            </span><span class="k">allocate</span><span class="w"> </span><span class="p">(</span><span class="n">logical_data</span><span class="p">(</span><span class="n">size</span><span class="p">(</span><span class="n">data_strings</span><span class="p">)))</span>
 <span class="w">            </span><span class="k">do </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="p">(</span><span class="n">data_strings</span><span class="p">)</span>
-<span class="w">                </span><span class="k">select case</span><span class="p">(</span><span class="nb">trim</span><span class="p">(</span><span class="nb">adjustl</span><span class="p">(</span><span class="n">data_strings</span><span class="p">(</span><span class="n">i</span><span class="p">))))</span>
-<span class="w">                </span><span class="k">case</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;true&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;.true.&quot;</span><span class="p">)</span>
+<span class="w">                </span><span class="k">select case</span><span class="w"> </span><span class="p">(</span><span class="nb">trim</span><span class="p">(</span><span class="nb">adjustl</span><span class="p">(</span><span class="n">data_strings</span><span class="p">(</span><span class="n">i</span><span class="p">))))</span>
+<span class="w">                </span><span class="k">case</span><span class="w"> </span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;true&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;.true.&quot;</span><span class="p">)</span>
 <span class="w">                    </span><span class="n">logical_data</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">true</span><span class="p">.</span>
-<span class="w">                </span><span class="k">case</span><span class="p">(</span><span class="s2">&quot;F&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;false&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;.false.&quot;</span><span class="p">)</span>
+<span class="w">                </span><span class="k">case</span><span class="w"> </span><span class="p">(</span><span class="s2">&quot;F&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;false&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;.false.&quot;</span><span class="p">)</span>
 <span class="w">                    </span><span class="n">logical_data</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">false</span><span class="p">.</span>
 <span class="w">                </span><span class="k">case </span><span class="n">default</span>
 <span class="w">                    </span><span class="n">logical_data</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="n">false</span><span class="p">.</span><span class="w">  </span><span class="c">! Default for invalid data</span>
 <span class="w">                </span><span class="k">end select</span>
 <span class="k">            end do</span>
 <span class="k">            if</span><span class="w"> </span><span class="p">(</span><span class="n">has_headers</span><span class="w"> </span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="w"> </span><span class="nb">present</span><span class="p">(</span><span class="n">headers</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
-<span class="k">                call </span><span class="n">df</span><span class="p">%</span><span class="n">append</span><span class="p">(</span><span class="n">logical_data</span><span class="p">,</span><span class="w"> </span><span class="n">headers</span><span class="p">(</span><span class="n">col_index</span><span class="p">))</span>
+<span class="k">                call </span><span class="n">df_append_logical</span><span class="p">(</span><span class="n">df</span><span class="p">,</span><span class="w"> </span><span class="n">logical_data</span><span class="p">,</span><span class="w"> </span><span class="n">headers</span><span class="p">(</span><span class="n">col_index</span><span class="p">))</span>
 <span class="w">            </span><span class="k">else</span>
-<span class="k">                call </span><span class="n">df</span><span class="p">%</span><span class="n">append</span><span class="p">(</span><span class="n">logical_data</span><span class="p">)</span>
+<span class="k">                call </span><span class="n">df_append_logical</span><span class="p">(</span><span class="n">df</span><span class="p">,</span><span class="w"> </span><span class="n">logical_data</span><span class="p">)</span>
 <span class="w">            </span><span class="k">end if</span>
 <span class="k">        case </span><span class="n">default</span><span class="w"> </span><span class="c">! CHARACTER_NUM</span>
 <span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">has_headers</span><span class="w"> </span><span class="p">.</span><span class="nb">and</span><span class="p">.</span><span class="w"> </span><span class="nb">present</span><span class="p">(</span><span class="n">headers</span><span class="p">))</span><span class="w"> </span><span class="k">then</span>
-<span class="k">                call </span><span class="n">df</span><span class="p">%</span><span class="n">append</span><span class="p">(</span><span class="n">data_strings</span><span class="p">,</span><span class="w"> </span><span class="n">headers</span><span class="p">(</span><span class="n">col_index</span><span class="p">))</span>
+<span class="k">                call </span><span class="n">df_append_character</span><span class="p">(</span><span class="n">df</span><span class="p">,</span><span class="w"> </span><span class="n">data_strings</span><span class="p">,</span><span class="w"> </span><span class="n">headers</span><span class="p">(</span><span class="n">col_index</span><span class="p">))</span>
 <span class="w">            </span><span class="k">else</span>
-<span class="k">                call </span><span class="n">df</span><span class="p">%</span><span class="n">append</span><span class="p">(</span><span class="n">data_strings</span><span class="p">)</span>
+<span class="k">                call </span><span class="n">df_append_character</span><span class="p">(</span><span class="n">df</span><span class="p">,</span><span class="w"> </span><span class="n">data_strings</span><span class="p">)</span>
 <span class="w">            </span><span class="k">end if</span>
 <span class="k">        end select</span>
 <span class="k">    end subroutine </span><span class="n">add_csv_column</span>
@@ -417,7 +432,7 @@
             <p class="text-end">
               Documentation generated by
               <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
- on 2025-09-29 23:14 -0400             </p>
+ on 2025-10-01 06:54 -0400             </p>
           </div>
         </div>
         <br>

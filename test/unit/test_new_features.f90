@@ -44,13 +44,13 @@ contains
         write (*, *) "Testing min/max functions..."
 
         call df % new()
-        call df % append(temps, "Temperature")
-        call df % append(scores, "Score")
+        call df_append_real(df, temps, "Temperature")
+        call df_append_integer(df, scores, "Score")
 
-        call assert_true(abs(df % min_real(1) - 15.5_rk) < 1e-6_rk, "Min real value")
-        call assert_true(abs(df % max_real(1) - 25.1_rk) < 1e-6_rk, "Max real value")
-        call assert_true(df % min_integer(2) == 78_ik, "Min integer value")
-        call assert_true(df % max_integer(2) == 96_ik, "Max integer value")
+        call assert_true(abs(df_min_real(df, 1) - 15.5_rk) < 1e-6_rk, "Min real value")
+        call assert_true(abs(df_max_real(df, 1) - 25.1_rk) < 1e-6_rk, "Max real value")
+        call assert_true(df_min_integer(df, 2) == 78_ik, "Min integer value")
+        call assert_true(df_max_integer(df, 2) == 96_ik, "Max integer value")
 
         call df % destroy()
     end subroutine
@@ -65,11 +65,11 @@ contains
         write (*, *) "Testing column selection..."
 
         call df % new()
-        call df % append(temps, "Temperature")
-        call df % append(pressures, "Pressure")
-        call df % append(sunny, "Sunny")
+        call df_append_real(df, temps, "Temperature")
+        call df_append_integer(df, pressures, "Pressure")
+        call df_append_logical(df, sunny, "Sunny")
 
-        selected_df = df % select_columns(selected_cols)
+        selected_df = df_select_columns(df, selected_cols)
 
         call assert_true(selected_df % ncols() == 2, "Selected columns count")
         call assert_true(selected_df % nrows() == 3, "Selected rows count")
@@ -88,15 +88,15 @@ contains
         write (*, *) "Testing row slicing..."
 
         call df % new()
-        call df % append(temps, "Temperature")
-        call df % append(pressures, "Pressure")
+        call df_append_real(df, temps, "Temperature")
+        call df_append_integer(df, pressures, "Pressure")
 
-        sliced_df = df % slice_rows(2, 4)
+        sliced_df = df_slice_rows(df, 2, 4)
 
         call assert_true(sliced_df % ncols() == 2, "Sliced columns count")
         call assert_true(sliced_df % nrows() == 3, "Sliced rows count")
-        call assert_true(abs(sliced_df % get_val_real(1, 1) - 22.5_rk) < 1e-6_rk, "First sliced value")
-        call assert_true(sliced_df % get_val_integer(2, 3) == 1005_ik, "Last sliced value")
+        call assert_true(abs(df_get_val_real(sliced_df, 1, 1) - 22.5_rk) < 1e-6_rk, "First sliced value")
+        call assert_true(df_get_val_integer(sliced_df, 3, 2) == 1005_ik, "Last sliced value")
 
         call df % destroy()
         call sliced_df % destroy()
@@ -110,15 +110,15 @@ contains
         write (*, *) "Testing logical filtering..."
 
         call df % new()
-        call df % append(temps, "Temperature")
-        call df % append(hot_days, "HotDay")
+        call df_append_real(df, temps, "Temperature")
+        call df_append_logical(df, hot_days, "HotDay")
 
-        filtered_df = df % filter_rows_logical(2)
+        filtered_df = df_filter_rows_logical(df, 2)
 
         call assert_true(filtered_df % ncols() == 2, "Filtered columns count")
         call assert_true(filtered_df % nrows() == 2, "Filtered rows count")
-        call assert_true(abs(filtered_df % get_val_real(1, 1) - 25.0_rk) < 1e-6_rk, "First filtered temp")
-        call assert_true(abs(filtered_df % get_val_real(1, 2) - 23.0_rk) < 1e-6_rk, "Second filtered temp")
+        call assert_true(abs(df_get_val_real(filtered_df, 1, 1) - 25.0_rk) < 1e-6_rk, "First filtered temp")
+        call assert_true(abs(df_get_val_real(filtered_df, 2, 1) - 23.0_rk) < 1e-6_rk, "Second filtered temp")
 
         call df % destroy()
         call filtered_df % destroy()
@@ -132,44 +132,44 @@ contains
         write (*, *) "Testing sorting..."
 
         call df % new()
-        call df % append(temps, "Temperature")
-        call df % append(cities, "City")
+        call df_append_real(df, temps, "Temperature")
+        call df_append_character(df, cities, "City")
 
         ! Sort by temperature (ascending)
-        call df % sort_by_column(1, .true.)
+        call df_sort_by_column(df, 1, .true.)
 
-        call assert_true(abs(df % get_val_real(1, 1) - 18.0_rk) < 1e-6_rk, "Sorted first temp")
-        call assert_true(abs(df % get_val_real(1, 4) - 25.0_rk) < 1e-6_rk, "Sorted last temp")
-        call assert_true(trim(df % get_val_character(2, 1)) == "Boston", "Sorted first city")
-        call assert_true(trim(df % get_val_character(2, 4)) == "Austin", "Sorted last city")
+        call assert_true(abs(df_get_val_real(df, 1, 1) - 18.0_rk) < 1e-6_rk, "Sorted first temp")
+        call assert_true(abs(df_get_val_real(df, 4, 1) - 25.0_rk) < 1e-6_rk, "Sorted last temp")
+        call assert_true(trim(df_get_val_character(df, 1, 2)) == "Boston", "Sorted first city")
+        call assert_true(trim(df_get_val_character(df, 4, 2)) == "Austin", "Sorted last city")
 
         call df % destroy()
     end subroutine
 
     subroutine test_copying()
-        type(data_frame) :: df, df_copy
+        type(data_frame) :: df, df_copied
         real(rk), dimension(3) :: temps = [20.0_rk, 22.5_rk, 25.0_rk]
         integer(ik), dimension(3) :: scores = [85_ik, 90_ik, 95_ik]
 
         write (*, *) "Testing data frame copying..."
 
         call df % new()
-        call df % append(temps, "Temperature")
-        call df % append(scores, "Score")
+        call df_append_real(df, temps, "Temperature")
+        call df_append_integer(df, scores, "Score")
 
-        df_copy = df % copy()
+        df_copied = df_copy(df)
 
-        call assert_true(df_copy % ncols() == df % ncols(), "Copy columns count")
-        call assert_true(df_copy % nrows() == df % nrows(), "Copy rows count")
-        call assert_true(df_copy % header(1) == df % header(1), "Copy first header")
-        call assert_true(df_copy % header(2) == df % header(2), "Copy second header")
+        call assert_true(df_copied % ncols() == df % ncols(), "Copy columns count")
+        call assert_true(df_copied % nrows() == df % nrows(), "Copy rows count")
+        call assert_true(df_copied % header(1) == df % header(1), "Copy first header")
+        call assert_true(df_copied % header(2) == df % header(2), "Copy second header")
 
         ! Test that they're independent
-        call df % set_val_real(1, 1, 99.0_rk)
-        call assert_true(abs(df_copy % get_val_real(1, 1) - 20.0_rk) < 1e-6_rk, "Copy independence")
+        call df_set_val_real(df, 1, 1, 99.0_rk)
+        call assert_true(abs(df_get_val_real(df_copied, 1, 1) - 20.0_rk) < 1e-6_rk, "Copy independence")
 
         call df % destroy()
-        call df_copy % destroy()
+        call df_copied % destroy()
     end subroutine
 
 end program test_new_features

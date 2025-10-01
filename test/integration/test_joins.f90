@@ -25,33 +25,33 @@ program test_joins
     dept_ids_emp = [1_ik, 2_ik, 1_ik, 3_ik, 2_ik, 5_ik]  ! Note: Frank is in dept 5 which doesn't exist
 
     call employees % new()
-    call employees % append(emp_ids, "EmpID")
-    call employees % append(emp_names, "Name")
-    call employees % append(dept_ids_emp, "DeptID")
+    call df_append_integer(employees, emp_ids, "EmpID")
+    call df_append_character(employees, emp_names, "Name")
+    call df_append_integer(employees, dept_ids_emp, "DeptID")
 
     write (*, '(a)') ""
     write (*, '(a)') "Employees Table:"
-    call employees % write_console()
+    call df_write_console(employees)
 
     ! Create departments dataframe
     dept_ids = [1_ik, 2_ik, 3_ik, 4_ik]  ! Note: dept 4 has no employees, dept 5 is missing
     dept_names = ["Engineering ", "Sales       ", "HR          ", "Marketing   "]
 
     call departments % new()
-    call departments % append(dept_ids, "DeptID")
-    call departments % append(dept_names, "DeptName")
+    call df_append_integer(departments, dept_ids, "DeptID")
+    call df_append_character(departments, dept_names, "DeptName")
 
     write (*, '(a)') ""
     write (*, '(a)') "Departments Table:"
-    call departments % write_console()
+    call df_write_console(departments)
 
     ! Test INNER JOIN
     write (*, '(a)') ""
     write (*, '(a)') "================================================"
     write (*, '(a)') "Test 1: INNER JOIN (only matching rows)"
     write (*, '(a)') "================================================"
-    inner_result = employees % inner_join(departments, 3, 1)
-    call inner_result % write_console()
+    inner_result = df_inner_join(employees, departments, 3, 1)
+    call df_write_console(inner_result)
     write (*, '(a,i0,a)') "Result has ", inner_result % nrows(), " rows"
 
     ! Test LEFT JOIN
@@ -59,8 +59,8 @@ program test_joins
     write (*, '(a)') "================================================"
     write (*, '(a)') "Test 2: LEFT JOIN (all employees + matching depts)"
     write (*, '(a)') "================================================"
-    left_result = employees % left_join(departments, 3, 1)
-    call left_result % write_console()
+    left_result = df_left_join(employees, departments, 3, 1)
+    call df_write_console(left_result)
     write (*, '(a,i0,a)') "Result has ", left_result % nrows(), " rows"
     write (*, '(a)') "Note: Frank (dept 5) has NULL for department name"
 
@@ -69,8 +69,8 @@ program test_joins
     write (*, '(a)') "================================================"
     write (*, '(a)') "Test 3: RIGHT JOIN (all depts + matching employees)"
     write (*, '(a)') "================================================"
-    right_result = employees % right_join(departments, 3, 1)
-    call right_result % write_console()
+    right_result = df_right_join(employees, departments, 3, 1)
+    call df_write_console(right_result)
     write (*, '(a,i0,a)') "Result has ", right_result % nrows(), " rows"
     write (*, '(a)') "Note: Marketing dept has NULL for employee info"
 
@@ -79,8 +79,8 @@ program test_joins
     write (*, '(a)') "================================================"
     write (*, '(a)') "Test 4: OUTER JOIN (all rows from both tables)"
     write (*, '(a)') "================================================"
-    outer_result = employees % outer_join(departments, 3, 1)
-    call outer_result % write_console()
+    outer_result = df_outer_join(employees, departments, 3, 1)
+    call df_write_console(outer_result)
     write (*, '(a,i0,a)') "Result has ", outer_result % nrows(), " rows"
     write (*, '(a)') "Note: Shows Frank (no dept) AND Marketing (no employees)"
 
@@ -96,30 +96,30 @@ program test_joins
     supplier_codes_prod = ["S001  ", "S002  ", "S001  ", "S003  ", "S002  "]
 
     call products % new()
-    call products % append(product_codes, "ProductCode")
-    call products % append(product_names, "ProductName")
-    call products % append(prices, "Price")
-    call products % append(supplier_codes_prod, "SupplierCode")
+    call df_append_character(products, product_codes, "ProductCode")
+    call df_append_character(products, product_names, "ProductName")
+    call df_append_real(products, prices, "Price")
+    call df_append_character(products, supplier_codes_prod, "SupplierCode")
 
     write (*, '(a)') ""
     write (*, '(a)') "Products Table:"
-    call products % write_console()
+    call df_write_console(products)
 
     supplier_codes = ["S001  ", "S002  ", "S003  "]
     supplier_names = ["Acme Corp       ", "Global Supply   ", "Best Parts      "]
 
     call suppliers % new()
-    call suppliers % append(supplier_codes, "SupplierCode")
-    call suppliers % append(supplier_names, "SupplierName")
+    call df_append_character(suppliers, supplier_codes, "SupplierCode")
+    call df_append_character(suppliers, supplier_names, "SupplierName")
 
     write (*, '(a)') ""
     write (*, '(a)') "Suppliers Table:"
-    call suppliers % write_console()
+    call df_write_console(suppliers)
 
     write (*, '(a)') ""
     write (*, '(a)') "INNER JOIN on SupplierCode:"
-    product_join = products % inner_join(suppliers, 4, 1)
-    call product_join % write_console()
+    product_join = df_inner_join(products, suppliers, 4, 1)
+    call df_write_console(product_join)
 
     ! Clean up
     call employees % destroy()

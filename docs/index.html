@@ -100,9 +100,9 @@
 </p>
 
 <hr>
-<p>DataFort is a dataframes library for Fortran, providing pandas-like functionality for scientific computing and data analysis.</p>
+<p>DataFort is a dataframes library for Fortran, providing pandas/polars/dplyr-like functionality for scientific computing and data analysis.</p>
 <div style="background-color: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 20px 0; border-radius: 4px;">
-  <strong>⚠️ Warning:</strong> Project is very much a WIP. Use at your own risk.
+  <strong>⚠️ Warning:</strong> Project is very much a WIP. Don't use in production.
 </div>
 
 <hr>
@@ -113,10 +113,14 @@
 <span class="n">DataFort</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">git</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;https://github.com/rngil/DataFort&quot;</span><span class="w"> </span><span class="p">}</span>
 </code></pre></div>
 
-<h3 id="manual">Manual</h3>
-<div class="codehilite"><pre><span></span><code>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/rngil/DataFort
+<h3 id="from-source">From Source</h3>
+<div class="codehilite"><pre><span></span><code>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/rngil/DataFort.git
 <span class="nb">cd</span><span class="w"> </span>DataFort
-./run_all_tests.sh<span class="w">  </span><span class="c1"># Run test suite</span>
+fpm<span class="w"> </span>build
+</code></pre></div>
+
+<p>To run tests:</p>
+<div class="codehilite"><pre><span></span><code>fpm<span class="w"> </span><span class="nb">test</span>
 </code></pre></div>
 
 <hr>
@@ -133,17 +137,17 @@
 
 <span class="w">    </span><span class="c">! Create and populate</span>
 <span class="w">    </span><span class="k">call </span><span class="n">df</span><span class="p">%</span><span class="n">new</span><span class="p">()</span>
-<span class="w">    </span><span class="k">call </span><span class="n">df</span><span class="p">%</span><span class="n">append</span><span class="p">(</span><span class="n">temps</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Temperature&quot;</span><span class="p">)</span>
-<span class="w">    </span><span class="k">call </span><span class="n">df</span><span class="p">%</span><span class="n">append</span><span class="p">(</span><span class="n">pressures</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Pressure&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="k">call </span><span class="n">df_append_real</span><span class="p">(</span><span class="n">df</span><span class="p">,</span><span class="w"> </span><span class="n">temps</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Temperature&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="k">call </span><span class="n">df_append_integer</span><span class="p">(</span><span class="n">df</span><span class="p">,</span><span class="w"> </span><span class="n">pressures</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Pressure&quot;</span><span class="p">)</span>
 
 <span class="w">    </span><span class="c">! Display</span>
-<span class="w">    </span><span class="k">call </span><span class="n">df</span><span class="p">%</span><span class="n">write_console</span><span class="p">()</span>
+<span class="w">    </span><span class="k">call </span><span class="n">df_write_console</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
 
 <span class="w">    </span><span class="c">! Statistics</span>
-<span class="w">    </span><span class="k">print</span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Mean temperature:&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">df</span><span class="p">%</span><span class="n">mean_real</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="w">    </span><span class="k">print</span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Mean temperature:&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">df_mean_real</span><span class="p">(</span><span class="n">df</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
 
 <span class="w">    </span><span class="c">! Export</span>
-<span class="w">    </span><span class="k">call </span><span class="n">df</span><span class="p">%</span><span class="n">write_csv</span><span class="p">(</span><span class="s2">&quot;data.csv&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="k">call </span><span class="n">df_write_csv</span><span class="p">(</span><span class="n">df</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;data.csv&quot;</span><span class="p">)</span>
 
 <span class="w">    </span><span class="c">! Cleanup</span>
 <span class="w">    </span><span class="k">call </span><span class="n">df</span><span class="p">%</span><span class="n">destroy</span><span class="p">()</span>
@@ -190,7 +194,7 @@ make<span class="w"> </span>clean<span class="w">     </span><span class="c1"># 
           <div class="col-xs-6 col-sm-4">
             <div>
               <h3>Modules</h3>
-              <ul><li><a href='module/column_class.html'>column_class</a></li><li><a href='module/datafort.html'>datafort</a></li><li><a href='module/precision.html'>precision</a></li><li><a href='module/split_mod.html'>split_mod</a></li><li><a href='module/types.html'>types</a></li><li><a href='module/utilities.html'>utilities</a></li></ul>
+              <ul><li><a href='module/column_class.html'>column_class</a></li><li><a href='module/datafort.html'>datafort</a></li><li><a href='module/datafort_accessors.html'>datafort_accessors</a></li><li><a href='module/datafort_advanced.html'>datafort_advanced</a></li><li><a href='module/datafort_io.html'>datafort_io</a></li><li><a href='module/datafort_joins.html'>datafort_joins</a></li><li><a href='module/datafort_manipulation.html'>datafort_manipulation</a></li><li><a href='module/datafort_nan.html'>datafort_nan</a></li><li><a href='module/datafort_sorting.html'>datafort_sorting</a></li><li><a href='module/datafort_statistics.html'>datafort_statistics</a></li></ul>
             </div>
             <div>
               <ul>
@@ -201,7 +205,7 @@ make<span class="w"> </span>clean<span class="w">     </span><span class="c1"># 
           <div class="col-xs-6 col-sm-4">
             <div>
               <h3>Procedures</h3>
-              <ul><li><a href='proc/abs_column_integer.html'>abs_column_integer</a></li><li><a href='proc/abs_column_real.html'>abs_column_real</a></li><li><a href='proc/add_col_character.html'>add_col_character</a></li><li><a href='proc/add_col_complex.html'>add_col_complex</a></li><li><a href='proc/add_col_integer.html'>add_col_integer</a></li><li><a href='proc/add_col_logical.html'>add_col_logical</a></li><li><a href='proc/add_col_real.html'>add_col_real</a></li><li><a href='proc/add_csv_column.html'>add_csv_column</a></li><li><a href='proc/already_header.html'>already_header</a></li><li><a href='proc/apply_to_all_rows_real.html'>apply_to_all_rows_real</a></li></ul>
+              <ul><li><a href='proc/add_csv_column.html'>add_csv_column</a></li><li><a href='proc/already_header.html'>already_header</a></li><li><a href='proc/build_joined_dataframe.html'>build_joined_dataframe</a></li><li><a href='proc/calculate_max_real.html'>calculate_max_real</a></li><li><a href='proc/calculate_mean_real.html'>calculate_mean_real</a></li><li><a href='proc/calculate_min_real.html'>calculate_min_real</a></li><li><a href='proc/calculate_std_real.html'>calculate_std_real</a></li><li><a href='proc/change_col_character.html'>change_col_character</a></li><li><a href='proc/change_col_complex.html'>change_col_complex</a></li><li><a href='proc/change_col_integer.html'>change_col_integer</a></li></ul>
             </div>
             <div>
               <ul>
@@ -236,7 +240,7 @@ make<span class="w"> </span>clean<span class="w">     </span><span class="c1"># 
             <p class="text-end">
               Documentation generated by
               <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
- on 2025-09-29 23:14 -0400             </p>
+ on 2025-10-01 06:54 -0400             </p>
           </div>
         </div>
         <br>

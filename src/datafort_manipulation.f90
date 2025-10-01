@@ -482,7 +482,7 @@ contains
         type(data_frame) :: transposed_df
 
         integer :: i, j
-        character(len=50), dimension(:), allocatable :: row_data
+        character(len=:), dimension(:), allocatable :: row_data
         character(len=20) :: temp_str
         type(column) :: col
 
@@ -500,7 +500,7 @@ contains
 
         ! Add each row as a column
         do i = 1, df % nrows()
-            allocate (row_data(df % ncols()))
+            allocate (character(len=50) :: row_data(df % ncols()))
 
             do j = 1, df % ncols()
                 col = df % get_data_col(j)
@@ -574,36 +574,36 @@ contains
 
         do i = 1, df % ncols()
             if (i /= col_index) then
-                select case (df % get_data_col(i) % get_type())
+                select case (df % dtype(i))
                 case (REAL_NUM)
                     if (df % get_with_headers()) then
-                        call df_append_real(temp_df, df % get_data_col(i) % getr(), df % header(i))
+                        call df_append_real(temp_df, df_get_col_real(df, i), df % header(i))
                     else
-                        call df_append_real(temp_df, df % get_data_col(i) % getr())
+                        call df_append_real(temp_df, df_get_col_real(df, i))
                     end if
                 case (INTEGER_NUM)
                     if (df % get_with_headers()) then
-                        call df_append_integer(temp_df, df % get_data_col(i) % geti(), df % header(i))
+                        call df_append_integer(temp_df, df_get_col_integer(df, i), df % header(i))
                     else
-                        call df_append_integer(temp_df, df % get_data_col(i) % geti())
+                        call df_append_integer(temp_df, df_get_col_integer(df, i))
                     end if
                 case (LOGICAL_NUM)
                     if (df % get_with_headers()) then
-                        call df_append_logical(temp_df, df % get_data_col(i) % getl(), df % header(i))
+                        call df_append_logical(temp_df, df_get_col_logical(df, i), df % header(i))
                     else
-                        call df_append_logical(temp_df, df % get_data_col(i) % getl())
+                        call df_append_logical(temp_df, df_get_col_logical(df, i))
                     end if
                 case (CHARACTER_NUM)
                     if (df % get_with_headers()) then
-                        call df_append_character(temp_df, df % get_data_col(i) % getch(), df % header(i))
+                        call df_append_character(temp_df, df_get_col_character(df, i), df % header(i))
                     else
-                        call df_append_character(temp_df, df % get_data_col(i) % getch())
+                        call df_append_character(temp_df, df_get_col_character(df, i))
                     end if
                 case (COMPLEX_NUM)
                     if (df % get_with_headers()) then
-                        call df_append_complex(temp_df, df % get_data_col(i) % getc(), df % header(i))
+                        call df_append_complex(temp_df, df_get_col_complex(df, i), df % header(i))
                     else
-                        call df_append_complex(temp_df, df % get_data_col(i) % getc())
+                        call df_append_complex(temp_df, df_get_col_complex(df, i))
                     end if
                 end select
             end if
@@ -638,36 +638,36 @@ contains
         call temp_df % new(df % get_max_char_len())
 
         do i = 1, df % ncols()
-            select case (df % get_data_col(new_order(i)) % get_type())
+            select case (df % dtype(new_order(i)))
             case (REAL_NUM)
                 if (df % get_with_headers()) then
-                    call df_append_real(temp_df, df % get_data_col(new_order(i)) % getr(), df % header(new_order(i)))
+                    call df_append_real(temp_df, df_get_col_real(df, new_order(i)), df % header(new_order(i)))
                 else
-                    call df_append_real(temp_df, df % get_data_col(new_order(i)) % getr())
+                    call df_append_real(temp_df, df_get_col_real(df, new_order(i)))
                 end if
             case (INTEGER_NUM)
                 if (df % get_with_headers()) then
-                    call df_append_integer(temp_df, df % get_data_col(new_order(i)) % geti(), df % header(new_order(i)))
+                    call df_append_integer(temp_df, df_get_col_integer(df, new_order(i)), df % header(new_order(i)))
                 else
-                    call df_append_integer(temp_df, df % get_data_col(new_order(i)) % geti())
+                    call df_append_integer(temp_df, df_get_col_integer(df, new_order(i)))
                 end if
             case (LOGICAL_NUM)
                 if (df % get_with_headers()) then
-                    call df_append_logical(temp_df, df % get_data_col(new_order(i)) % getl(), df % header(new_order(i)))
+                    call df_append_logical(temp_df, df_get_col_logical(df, new_order(i)), df % header(new_order(i)))
                 else
-                    call df_append_logical(temp_df, df % get_data_col(new_order(i)) % getl())
+                    call df_append_logical(temp_df, df_get_col_logical(df, new_order(i)))
                 end if
             case (CHARACTER_NUM)
                 if (df % get_with_headers()) then
-                    call df_append_character(temp_df, df % get_data_col(new_order(i)) % getch(), df % header(new_order(i)))
+                    call df_append_character(temp_df, df_get_col_character(df, new_order(i)), df % header(new_order(i)))
                 else
-                    call df_append_character(temp_df, df % get_data_col(new_order(i)) % getch())
+                    call df_append_character(temp_df, df_get_col_character(df, new_order(i)))
                 end if
             case (COMPLEX_NUM)
                 if (df % get_with_headers()) then
-                    call df_append_complex(temp_df, df % get_data_col(new_order(i)) % getc(), df % header(new_order(i)))
+                    call df_append_complex(temp_df, df_get_col_complex(df, new_order(i)), df % header(new_order(i)))
                 else
-                    call df_append_complex(temp_df, df % get_data_col(new_order(i)) % getc())
+                    call df_append_complex(temp_df, df_get_col_complex(df, new_order(i)))
                 end if
             end select
         end do
