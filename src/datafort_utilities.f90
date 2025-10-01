@@ -32,6 +32,10 @@ module datafort_utilities
     public :: df_nsmallest_real
     public :: df_nlargest_integer
     public :: df_nsmallest_integer
+    public :: df_to_array_real
+    public :: df_equals
+    public :: df_pipe
+    public :: pipe_func
 
     ! Abstract interface for row functions
     abstract interface
@@ -41,6 +45,15 @@ module datafort_utilities
             integer, intent(in) :: num_cols
             real(rk) :: output
         end function row_func_real
+    end interface
+
+    ! Abstract interface for pipe functions
+    abstract interface
+        function pipe_func(df_in) result(df_out)
+            import :: data_frame
+            type(data_frame), intent(in) :: df_in
+            type(data_frame) :: df_out
+        end function pipe_func
     end interface
 
 contains
@@ -727,5 +740,169 @@ contains
 
         call sorted_df%destroy()
     end function df_nsmallest_integer
+
+    !========================================================================
+    ! TO_ARRAY FUNCTION
+    !========================================================================
+
+    !> Convert dataframe to 2D real array
+    !!
+    !! Converts all numeric columns to a 2D real array. Only works if all
+    !! columns are real or integer type. Integer values are converted to real.
+    !!
+    !! @param df The data frame to convert
+    !! @return 2D real array with shape (nrows, ncols)
+    function df_to_array_real(df) result(array)
+        type(data_frame), intent(in) :: df
+        real(rk), dimension(:, :), allocatable :: array
+        integer :: i, j, n_rows, n_cols
+        real(rk), dimension(:), allocatable :: col_real
+        integer(ik), dimension(:), allocatable :: col_int
+
+        n_rows = df%nrows()
+        n_cols = df%ncols()
+
+        if (n_rows == 0 .or. n_cols == 0) then
+            allocate (array(0, 0))
+            return
+        end if
+
+        ! Check that all columns are numeric
+        do i = 1, n_cols
+            if (df%dtype(i) /= REAL_NUM .and. df%dtype(i) /= INTEGER_NUM) then
+                error stop "df_to_array_real: all columns must be real or integer type"
+            end if
+        end do
+
+        allocate (array(n_rows, n_cols))
+
+        do i = 1, n_cols
+            if (df%dtype(i) == REAL_NUM) then
+                col_real = df_get_col_real(df, i)
+                array(:, i) = col_real
+                deallocate (col_real)
+            else  ! INTEGER_NUM
+                col_int = df_get_col_integer(df, i)
+                array(:, i) = real(col_int, rk)
+                deallocate (col_int)
+            end if
+        end do
+    end function df_to_array_real
+
+    !========================================================================
+    ! EQUALS FUNCTION
+    !========================================================================
+
+    !> Check if two dataframes are identical
+    !!
+    !! Compares shape, headers, column types, and all values
+    !!
+    !! @param df1 First data frame
+    !! @param df2 Second data frame
+    !! @return .true. if dataframes are identical, .false. otherwise
+    function df_equals(df1, df2) result(is_equal)
+        type(data_frame), intent(in) :: df1, df2
+        logical :: is_equal
+        integer :: i, j
+        real(rk), dimension(:), allocatable :: col1_real, col2_real
+        integer(ik), dimension(:), allocatable :: col1_int, col2_int
+        logical, dimension(:), allocatable :: col1_log, col2_log
+        character(len=:), allocatable :: val1_char, val2_char
+        complex(rk), dimension(:), allocatable :: col1_cplx, col2_cplx
+
+        is_equal = .false.
+
+        ! Check dimensions
+        if (df1%nrows() /= df2%nrows()) return
+        if (df1%ncols() /= df2%ncols()) return
+
+        ! Check headers
+        do i = 1, df1%ncols()
+            if (df1%header(i) /= df2%header(i)) return
+        end do
+
+        ! Check column types
+        do i = 1, df1%ncols()
+            if (df1%dtype(i) /= df2%dtype(i)) return
+        end do
+
+        ! Check values column by column
+        do i = 1, df1%ncols()
+            select case (df1%dtype(i))
+            case (REAL_NUM)
+                col1_real = df_get_col_real(df1, i)
+                col2_real = df_get_col_real(df2, i)
+                do j = 1, size(col1_real)
+                    if (abs(col1_real(j) - col2_real(j)) > 1.0e-10_rk) then
+                        deallocate (col1_real, col2_real)
+                        return
+                    end if
+                end do
+                deallocate (col1_real, col2_real)
+
+            case (INTEGER_NUM)
+                col1_int = df_get_col_integer(df1, i)
+                col2_int = df_get_col_integer(df2, i)
+                if (any(col1_int /= col2_int)) then
+                    deallocate (col1_int, col2_int)
+                    return
+                end if
+                deallocate (col1_int, col2_int)
+
+            case (LOGICAL_NUM)
+                col1_log = df_get_col_logical(df1, i)
+                col2_log = df_get_col_logical(df2, i)
+                if (any(col1_log .neqv. col2_log)) then
+                    deallocate (col1_log, col2_log)
+                    return
+                end if
+                deallocate (col1_log, col2_log)
+
+            case (CHARACTER_NUM)
+                do j = 1, df1%nrows()
+                    val1_char = df_get_val_character(df1, j, i)
+                    val2_char = df_get_val_character(df2, j, i)
+                    if (val1_char /= val2_char) then
+                        deallocate (val1_char, val2_char)
+                        return
+                    end if
+                    deallocate (val1_char, val2_char)
+                end do
+
+            case (COMPLEX_NUM)
+                col1_cplx = df_get_col_complex(df1, i)
+                col2_cplx = df_get_col_complex(df2, i)
+                do j = 1, size(col1_cplx)
+                    if (abs(col1_cplx(j) - col2_cplx(j)) > 1.0e-10_rk) then
+                        deallocate (col1_cplx, col2_cplx)
+                        return
+                    end if
+                end do
+                deallocate (col1_cplx, col2_cplx)
+            end select
+        end do
+
+        ! All checks passed
+        is_equal = .true.
+    end function df_equals
+
+    !========================================================================
+    ! PIPE FUNCTION
+    !========================================================================
+
+    !> Apply a custom function to a dataframe (for method chaining)
+    !!
+    !! Enables functional-style operations: df_pipe(df, my_func)
+    !!
+    !! @param df The data frame to transform
+    !! @param func The function to apply (must match pipe_func interface)
+    !! @return Transformed data frame
+    function df_pipe(df, func) result(result_df)
+        type(data_frame), intent(in) :: df
+        procedure(pipe_func) :: func
+        type(data_frame) :: result_df
+
+        result_df = func(df)
+    end function df_pipe
 
 end module datafort_utilities

@@ -44,6 +44,14 @@ module datafort_manipulation
     public :: df_rename_column
     public :: df_drop_column
     public :: df_reorder_columns
+    public :: df_isin_real
+    public :: df_isin_integer
+    public :: df_isin_character
+    public :: df_insert_column_real
+    public :: df_insert_column_integer
+    public :: df_insert_column_logical
+    public :: df_insert_column_character
+    public :: df_insert_column_complex
 
 contains
 
@@ -765,5 +773,319 @@ contains
             deallocate (complex_filtered)
         end select
     end subroutine copy_filtered_column
+
+    !========================================================================
+    ! ISIN FUNCTIONS
+    !========================================================================
+
+    !> Check if real values are in a given list
+    !!
+    !! @param df The data frame
+    !! @param col_index Column index to check
+    !! @param values Array of values to check for membership
+    !! @return Logical array indicating membership
+    function df_isin_real(df, col_index, values) result(mask)
+        type(data_frame), intent(in) :: df
+        integer, intent(in) :: col_index
+        real(rk), dimension(:), intent(in) :: values
+        logical, dimension(:), allocatable :: mask
+        real(rk), dimension(:), allocatable :: col_data
+        integer :: i, j
+
+        if (col_index < 1 .or. col_index > df%ncols()) error stop "column index out of range"
+        if (df%dtype(col_index) /= REAL_NUM) error stop "column is not real type"
+
+        col_data = df_get_col_real(df, col_index)
+        allocate (mask(size(col_data)))
+        mask = .false.
+
+        do i = 1, size(col_data)
+            do j = 1, size(values)
+                if (abs(col_data(i) - values(j)) < 1.0e-10_rk) then
+                    mask(i) = .true.
+                    exit
+                end if
+            end do
+        end do
+
+        deallocate (col_data)
+    end function df_isin_real
+
+    !> Check if integer values are in a given list
+    function df_isin_integer(df, col_index, values) result(mask)
+        type(data_frame), intent(in) :: df
+        integer, intent(in) :: col_index
+        integer(ik), dimension(:), intent(in) :: values
+        logical, dimension(:), allocatable :: mask
+        integer(ik), dimension(:), allocatable :: col_data
+        integer :: i, j
+
+        if (col_index < 1 .or. col_index > df%ncols()) error stop "column index out of range"
+        if (df%dtype(col_index) /= INTEGER_NUM) error stop "column is not integer type"
+
+        col_data = df_get_col_integer(df, col_index)
+        allocate (mask(size(col_data)))
+        mask = .false.
+
+        do i = 1, size(col_data)
+            do j = 1, size(values)
+                if (col_data(i) == values(j)) then
+                    mask(i) = .true.
+                    exit
+                end if
+            end do
+        end do
+
+        deallocate (col_data)
+    end function df_isin_integer
+
+    !> Check if character values are in a given list
+    function df_isin_character(df, col_index, values) result(mask)
+        type(data_frame), intent(in) :: df
+        integer, intent(in) :: col_index
+        character(len=*), dimension(:), intent(in) :: values
+        logical, dimension(:), allocatable :: mask
+        character(len=:), allocatable :: val
+        integer :: i, j
+
+        if (col_index < 1 .or. col_index > df%ncols()) error stop "column index out of range"
+        if (df%dtype(col_index) /= CHARACTER_NUM) error stop "column is not character type"
+
+        allocate (mask(df%nrows()))
+        mask = .false.
+
+        do i = 1, df%nrows()
+            val = df_get_val_character(df, i, col_index)
+            do j = 1, size(values)
+                if (trim(val) == trim(values(j))) then
+                    mask(i) = .true.
+                    exit
+                end if
+            end do
+            deallocate (val)
+        end do
+    end function df_isin_character
+
+    !========================================================================
+    ! INSERT COLUMN FUNCTIONS
+    !========================================================================
+
+    !> Insert a real column at a specific position
+    !!
+    !! @param df The data frame to modify
+    !! @param data The data to insert
+    !! @param position Position to insert (1 = first column)
+    !! @param header Optional column header
+    subroutine df_insert_column_real(df, data, position, header)
+        type(data_frame), intent(inout) :: df
+        real(rk), dimension(:), intent(in) :: data
+        integer, intent(in) :: position
+        character(len=*), intent(in), optional :: header
+
+        type(data_frame) :: temp_df
+        integer :: i, original_cols
+
+        if (position < 1 .or. position > df%ncols() + 1) error stop "invalid insertion position"
+        if (df%nrows() > 0 .and. size(data) /= df%nrows()) error stop "data size must match number of rows"
+
+        original_cols = df%ncols()
+        call temp_df%new(df%get_max_char_len())
+
+        ! Copy columns before insertion point
+        do i = 1, position - 1
+            call copy_column_to_df(df, i, temp_df)
+        end do
+
+        ! Insert new column
+        if (present(header)) then
+            call df_append_real(temp_df, data, header)
+        else
+            call df_append_real(temp_df, data)
+        end if
+
+        ! Copy remaining columns
+        do i = position, original_cols
+            call copy_column_to_df(df, i, temp_df)
+        end do
+
+        call df%destroy()
+        df = temp_df
+    end subroutine df_insert_column_real
+
+    !> Insert an integer column at a specific position
+    subroutine df_insert_column_integer(df, data, position, header)
+        type(data_frame), intent(inout) :: df
+        integer(ik), dimension(:), intent(in) :: data
+        integer, intent(in) :: position
+        character(len=*), intent(in), optional :: header
+
+        type(data_frame) :: temp_df
+        integer :: i, original_cols
+
+        if (position < 1 .or. position > df%ncols() + 1) error stop "invalid insertion position"
+        if (df%nrows() > 0 .and. size(data) /= df%nrows()) error stop "data size must match number of rows"
+
+        original_cols = df%ncols()
+        call temp_df%new(df%get_max_char_len())
+
+        do i = 1, position - 1
+            call copy_column_to_df(df, i, temp_df)
+        end do
+
+        if (present(header)) then
+            call df_append_integer(temp_df, data, header)
+        else
+            call df_append_integer(temp_df, data)
+        end if
+
+        do i = position, original_cols
+            call copy_column_to_df(df, i, temp_df)
+        end do
+
+        call df%destroy()
+        df = temp_df
+    end subroutine df_insert_column_integer
+
+    !> Insert a logical column at a specific position
+    subroutine df_insert_column_logical(df, data, position, header)
+        type(data_frame), intent(inout) :: df
+        logical, dimension(:), intent(in) :: data
+        integer, intent(in) :: position
+        character(len=*), intent(in), optional :: header
+
+        type(data_frame) :: temp_df
+        integer :: i, original_cols
+
+        if (position < 1 .or. position > df%ncols() + 1) error stop "invalid insertion position"
+        if (df%nrows() > 0 .and. size(data) /= df%nrows()) error stop "data size must match number of rows"
+
+        original_cols = df%ncols()
+        call temp_df%new(df%get_max_char_len())
+
+        do i = 1, position - 1
+            call copy_column_to_df(df, i, temp_df)
+        end do
+
+        if (present(header)) then
+            call df_append_logical(temp_df, data, header)
+        else
+            call df_append_logical(temp_df, data)
+        end if
+
+        do i = position, original_cols
+            call copy_column_to_df(df, i, temp_df)
+        end do
+
+        call df%destroy()
+        df = temp_df
+    end subroutine df_insert_column_logical
+
+    !> Insert a character column at a specific position
+    subroutine df_insert_column_character(df, data, position, header)
+        type(data_frame), intent(inout) :: df
+        character(len=*), dimension(:), intent(in) :: data
+        integer, intent(in) :: position
+        character(len=*), intent(in), optional :: header
+
+        type(data_frame) :: temp_df
+        integer :: i, original_cols
+
+        if (position < 1 .or. position > df%ncols() + 1) error stop "invalid insertion position"
+        if (df%nrows() > 0 .and. size(data) /= df%nrows()) error stop "data size must match number of rows"
+
+        original_cols = df%ncols()
+        call temp_df%new(df%get_max_char_len())
+
+        do i = 1, position - 1
+            call copy_column_to_df(df, i, temp_df)
+        end do
+
+        if (present(header)) then
+            call df_append_character(temp_df, data, header)
+        else
+            call df_append_character(temp_df, data)
+        end if
+
+        do i = position, original_cols
+            call copy_column_to_df(df, i, temp_df)
+        end do
+
+        call df%destroy()
+        df = temp_df
+    end subroutine df_insert_column_character
+
+    !> Insert a complex column at a specific position
+    subroutine df_insert_column_complex(df, data, position, header)
+        type(data_frame), intent(inout) :: df
+        complex(rk), dimension(:), intent(in) :: data
+        integer, intent(in) :: position
+        character(len=*), intent(in), optional :: header
+
+        type(data_frame) :: temp_df
+        integer :: i, original_cols
+
+        if (position < 1 .or. position > df%ncols() + 1) error stop "invalid insertion position"
+        if (df%nrows() > 0 .and. size(data) /= df%nrows()) error stop "data size must match number of rows"
+
+        original_cols = df%ncols()
+        call temp_df%new(df%get_max_char_len())
+
+        do i = 1, position - 1
+            call copy_column_to_df(df, i, temp_df)
+        end do
+
+        if (present(header)) then
+            call df_append_complex(temp_df, data, header)
+        else
+            call df_append_complex(temp_df, data)
+        end if
+
+        do i = position, original_cols
+            call copy_column_to_df(df, i, temp_df)
+        end do
+
+        call df%destroy()
+        df = temp_df
+    end subroutine df_insert_column_complex
+
+    !> Helper subroutine to copy a column from one dataframe to another
+    subroutine copy_column_to_df(source_df, col_index, target_df)
+        type(data_frame), intent(in) :: source_df
+        integer, intent(in) :: col_index
+        type(data_frame), intent(inout) :: target_df
+
+        select case (source_df%dtype(col_index))
+        case (REAL_NUM)
+            if (source_df%get_with_headers()) then
+                call df_append_real(target_df, df_get_col_real(source_df, col_index), source_df%header(col_index))
+            else
+                call df_append_real(target_df, df_get_col_real(source_df, col_index))
+            end if
+        case (INTEGER_NUM)
+            if (source_df%get_with_headers()) then
+                call df_append_integer(target_df, df_get_col_integer(source_df, col_index), source_df%header(col_index))
+            else
+                call df_append_integer(target_df, df_get_col_integer(source_df, col_index))
+            end if
+        case (LOGICAL_NUM)
+            if (source_df%get_with_headers()) then
+                call df_append_logical(target_df, df_get_col_logical(source_df, col_index), source_df%header(col_index))
+            else
+                call df_append_logical(target_df, df_get_col_logical(source_df, col_index))
+            end if
+        case (CHARACTER_NUM)
+            if (source_df%get_with_headers()) then
+                call df_append_character(target_df, df_get_col_character(source_df, col_index), source_df%header(col_index))
+            else
+                call df_append_character(target_df, df_get_col_character(source_df, col_index))
+            end if
+        case (COMPLEX_NUM)
+            if (source_df%get_with_headers()) then
+                call df_append_complex(target_df, df_get_col_complex(source_df, col_index), source_df%header(col_index))
+            else
+                call df_append_complex(target_df, df_get_col_complex(source_df, col_index))
+            end if
+        end select
+    end subroutine copy_column_to_df
 
 end module datafort_manipulation

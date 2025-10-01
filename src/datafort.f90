@@ -104,7 +104,10 @@ module datafort
         df_transpose, &
         df_rename_column, &
         df_drop_column, &
-        df_reorder_columns
+        df_reorder_columns, &
+        df_isin_real, df_isin_integer, df_isin_character, &
+        df_insert_column_real, df_insert_column_integer, df_insert_column_logical, &
+        df_insert_column_character, df_insert_column_complex
 
     ! Import sorting operations
     use datafort_sorting, only: &
@@ -123,7 +126,8 @@ module datafort
         df_apply_to_row_real, df_apply_to_all_rows_real, &
         row_func_real, &
         df_nlargest_real, df_nsmallest_real, &
-        df_nlargest_integer, df_nsmallest_integer
+        df_nlargest_integer, df_nsmallest_integer, &
+        df_to_array_real, df_equals, df_pipe, pipe_func
 
     ! Import join operations
     use datafort_joins, only: &
@@ -201,6 +205,9 @@ module datafort
     public :: df_rename_column
     public :: df_drop_column
     public :: df_reorder_columns
+    public :: df_isin_real, df_isin_integer, df_isin_character
+    public :: df_insert_column_real, df_insert_column_integer, df_insert_column_logical
+    public :: df_insert_column_character, df_insert_column_complex
 
     ! Re-export sorting operations
     public :: df_sort_by_column
@@ -217,6 +224,7 @@ module datafort
     public :: row_func_real
     public :: df_nlargest_real, df_nsmallest_real
     public :: df_nlargest_integer, df_nsmallest_integer
+    public :: df_to_array_real, df_equals, df_pipe, pipe_func
 
     ! Re-export join operations
     public :: df_inner_join, df_left_join, df_right_join, df_outer_join
