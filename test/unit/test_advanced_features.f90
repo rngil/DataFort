@@ -12,6 +12,7 @@ program test_advanced_features
     call test_column_manipulation()
     call test_advanced_filtering()
     call test_transpose()
+    call test_new_statistical_functions()
 
     if (all_tests_passed) then
         write (*, *) "All advanced feature tests passed!"
@@ -162,6 +163,116 @@ contains
 
         call df % destroy()
         call transposed_df % destroy()
+    end subroutine
+
+    subroutine test_new_statistical_functions()
+        type(data_frame) :: df, nlargest_df, nsmallest_df
+        real(rk), dimension(10) :: values = [1.0_rk, 2.0_rk, 3.0_rk, 4.0_rk, 5.0_rk, &
+                                              6.0_rk, 7.0_rk, 8.0_rk, 9.0_rk, 10.0_rk]
+        integer(ik), dimension(10) :: counts = [10_ik, 20_ik, 30_ik, 40_ik, 50_ik, &
+                                                 60_ik, 70_ik, 80_ik, 90_ik, 100_ik]
+        real(rk), dimension(7) :: skewed = [-10.0_rk, -5.0_rk, 0.0_rk, 1.0_rk, 2.0_rk, 3.0_rk, 20.0_rk]
+        integer(ik), dimension(7) :: skewed_int = [-10_ik, -5_ik, 0_ik, 1_ik, 2_ik, 3_ik, 20_ik]
+        character(len=10), dimension(5) :: names = ["Alice     ", "Bob       ", "Alice     ", &
+                                                     "Charlie   ", "Bob       "]
+        real(rk) :: skew_val, kurt_val
+        integer :: n_unique
+
+        write (*, *) "Testing new statistical functions..."
+
+        ! Test skewness on symmetric data (should be near 0)
+        call df % new()
+        call df_append_real(df, values, "Values")
+        call df_append_integer(df, counts, "Counts")
+
+        skew_val = df_skewness_real(df, 1)
+        call assert_approx_equal(skew_val, 0.0_rk, 0.1_rk, "Real skewness (symmetric)")
+
+        skew_val = df_skewness_integer(df, 2)
+        call assert_approx_equal(skew_val, 0.0_rk, 0.1_rk, "Integer skewness (symmetric)")
+
+        call df % destroy()
+
+        ! Test skewness on skewed data (should be positive for right skew)
+        call df % new()
+        call df_append_real(df, skewed, "Skewed")
+        call df_append_integer(df, skewed_int, "SkewedInt")
+
+        skew_val = df_skewness_real(df, 1)
+        call assert_true(skew_val > 0.0_rk, "Real skewness (right skewed)")
+
+        skew_val = df_skewness_integer(df, 2)
+        call assert_true(skew_val > 0.0_rk, "Integer skewness (right skewed)")
+
+        call df % destroy()
+
+        ! Test kurtosis on symmetric data
+        call df % new()
+        call df_append_real(df, values, "Values")
+        call df_append_integer(df, counts, "Counts")
+
+        kurt_val = df_kurtosis_real(df, 1)
+        ! Excess kurtosis for uniform-like distribution should be negative
+        call assert_true(kurt_val < 0.0_rk, "Real kurtosis (platykurtic)")
+
+        kurt_val = df_kurtosis_integer(df, 2)
+        call assert_true(kurt_val < 0.0_rk, "Integer kurtosis (platykurtic)")
+
+        call df % destroy()
+
+        ! Test nunique functions
+        call df % new()
+        call df_append_real(df, [1.0_rk, 2.0_rk, 1.0_rk, 3.0_rk, 2.0_rk], "Real")
+        call df_append_integer(df, [10_ik, 20_ik, 10_ik, 30_ik, 30_ik], "Integer")
+        call df_append_character(df, names, "Names")
+
+        n_unique = df_nunique_real(df, 1)
+        call assert_true(n_unique == 3, "Real nunique count")
+
+        n_unique = df_nunique_integer(df, 2)
+        call assert_true(n_unique == 3, "Integer nunique count")
+
+        n_unique = df_nunique_character(df, 3)
+        call assert_true(n_unique == 3, "Character nunique count")
+
+        call df % destroy()
+
+        ! Test nlargest/nsmallest functions
+        call df % new()
+        call df_append_real(df, [5.0_rk, 2.0_rk, 8.0_rk, 1.0_rk, 9.0_rk], "Values")
+        call df_append_integer(df, [50_ik, 20_ik, 80_ik, 10_ik, 90_ik], "Counts")
+
+        ! Test nlargest for real
+        nlargest_df = df_nlargest_real(df, 3, 1)
+        call assert_true(nlargest_df % nrows() == 3, "Nlargest real row count")
+        call assert_approx_equal(df_get_val_real(nlargest_df, 1, 1), 9.0_rk, 0.01_rk, &
+                                  "Nlargest real first value")
+        call assert_approx_equal(df_get_val_real(nlargest_df, 2, 1), 8.0_rk, 0.01_rk, &
+                                  "Nlargest real second value")
+        call nlargest_df % destroy()
+
+        ! Test nsmallest for real
+        nsmallest_df = df_nsmallest_real(df, 2, 1)
+        call assert_true(nsmallest_df % nrows() == 2, "Nsmallest real row count")
+        call assert_approx_equal(df_get_val_real(nsmallest_df, 1, 1), 1.0_rk, 0.01_rk, &
+                                  "Nsmallest real first value")
+        call nsmallest_df % destroy()
+
+        ! Test nlargest for integer
+        nlargest_df = df_nlargest_integer(df, 3, 2)
+        call assert_true(nlargest_df % nrows() == 3, "Nlargest integer row count")
+        call assert_true(df_get_val_integer(nlargest_df, 1, 2) == 90_ik, &
+                         "Nlargest integer first value")
+        call nlargest_df % destroy()
+
+        ! Test nsmallest for integer
+        nsmallest_df = df_nsmallest_integer(df, 2, 2)
+        call assert_true(nsmallest_df % nrows() == 2, "Nsmallest integer row count")
+        call assert_true(df_get_val_integer(nsmallest_df, 1, 2) == 10_ik, &
+                         "Nsmallest integer first value")
+        call nsmallest_df % destroy()
+
+        call df % destroy()
     end subroutine
 
 end program test_advanced_features

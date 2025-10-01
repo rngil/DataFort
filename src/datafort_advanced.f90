@@ -58,6 +58,11 @@ module datafort_advanced
     public :: df_drop_duplicates
     public :: df_drop_duplicates_subset
 
+    ! Public count unique functions
+    public :: df_nunique_real
+    public :: df_nunique_integer
+    public :: df_nunique_character
+
 contains
 
     !========================================================================
@@ -856,5 +861,58 @@ contains
 
         deallocate (is_dup, keep_mask, unique_indices)
     end function df_drop_duplicates_subset
+
+    !========================================================================
+    ! COUNT UNIQUE VALUE FUNCTIONS
+    !========================================================================
+
+    !> Count number of unique values in real column
+    !!
+    !! @param df The data frame
+    !! @param col_index Column index
+    !! @return Number of unique values (excluding NaN)
+    function df_nunique_real(df, col_index) result(n_unique)
+        type(data_frame), intent(in) :: df
+        integer, intent(in) :: col_index
+        integer :: n_unique
+
+        real(rk), dimension(:), allocatable :: unique_vals
+
+        if (col_index < 1 .or. col_index > df%ncols()) error stop "column index out of range"
+        if (df%dtype(col_index) /= REAL_NUM) error stop "column is not real type"
+
+        unique_vals = df_unique_real(df, col_index)
+        n_unique = size(unique_vals)
+    end function df_nunique_real
+
+    !> Count number of unique values in integer column
+    function df_nunique_integer(df, col_index) result(n_unique)
+        type(data_frame), intent(in) :: df
+        integer, intent(in) :: col_index
+        integer :: n_unique
+
+        integer(ik), dimension(:), allocatable :: unique_vals
+
+        if (col_index < 1 .or. col_index > df%ncols()) error stop "column index out of range"
+        if (df%dtype(col_index) /= INTEGER_NUM) error stop "column is not integer type"
+
+        unique_vals = df_unique_integer(df, col_index)
+        n_unique = size(unique_vals)
+    end function df_nunique_integer
+
+    !> Count number of unique values in character column
+    function df_nunique_character(df, col_index) result(n_unique)
+        type(data_frame), intent(in) :: df
+        integer, intent(in) :: col_index
+        integer :: n_unique
+
+        character(len=:), dimension(:), allocatable :: unique_vals
+
+        if (col_index < 1 .or. col_index > df%ncols()) error stop "column index out of range"
+        if (df%dtype(col_index) /= CHARACTER_NUM) error stop "column is not character type"
+
+        unique_vals = df_unique_character(df, col_index)
+        n_unique = size(unique_vals)
+    end function df_nunique_character
 
 end module datafort_advanced

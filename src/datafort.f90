@@ -75,7 +75,9 @@ module datafort
         df_min_real, df_min_integer, &
         df_max_real, df_max_integer, &
         df_correlation_real, &
-        df_describe_numeric
+        df_describe_numeric, &
+        df_skewness_real, df_skewness_integer, &
+        df_kurtosis_real, df_kurtosis_integer
 
     ! Import transformation operations
     use datafort_transformations, only: &
@@ -119,7 +121,9 @@ module datafort
         df_head, df_tail, df_shape, df_info, df_empty, df_clear, &
         df_sample, df_shuffle, &
         df_apply_to_row_real, df_apply_to_all_rows_real, &
-        row_func_real
+        row_func_real, &
+        df_nlargest_real, df_nsmallest_real, &
+        df_nlargest_integer, df_nsmallest_integer
 
     ! Import join operations
     use datafort_joins, only: &
@@ -137,7 +141,8 @@ module datafort
         df_unique_real, df_unique_integer, df_unique_character, &
         df_value_counts_real, df_value_counts_integer, df_value_counts_character, &
         df_concat, &
-        df_duplicated, df_drop_duplicates, df_drop_duplicates_subset
+        df_duplicated, df_drop_duplicates, df_drop_duplicates_subset, &
+        df_nunique_real, df_nunique_integer, df_nunique_character
 
     implicit none
     private
@@ -169,6 +174,8 @@ module datafort
     public :: df_max_real, df_max_integer
     public :: df_correlation_real
     public :: df_describe_numeric
+    public :: df_skewness_real, df_skewness_integer
+    public :: df_kurtosis_real, df_kurtosis_integer
 
     ! Re-export transformation operations
     public :: df_normalize_column_real, df_standardize_column_real
@@ -208,6 +215,8 @@ module datafort
     public :: df_sample, df_shuffle
     public :: df_apply_to_row_real, df_apply_to_all_rows_real
     public :: row_func_real
+    public :: df_nlargest_real, df_nsmallest_real
+    public :: df_nlargest_integer, df_nsmallest_integer
 
     ! Re-export join operations
     public :: df_inner_join, df_left_join, df_right_join, df_outer_join
@@ -223,5 +232,6 @@ module datafort
     public :: df_value_counts_real, df_value_counts_integer, df_value_counts_character
     public :: df_concat
     public :: df_duplicated, df_drop_duplicates, df_drop_duplicates_subset
+    public :: df_nunique_real, df_nunique_integer, df_nunique_character
 
 end module datafort

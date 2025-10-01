@@ -11,6 +11,8 @@ module datafort_utilities
     use types
     use datafort_types
     use datafort_accessors
+    use datafort_manipulation, only: df_copy
+    use datafort_sorting, only: df_sort_by_column
     use column_class
     implicit none
     private
@@ -26,6 +28,10 @@ module datafort_utilities
     public :: df_apply_to_row_real
     public :: df_apply_to_all_rows_real
     public :: row_func_real
+    public :: df_nlargest_real
+    public :: df_nsmallest_real
+    public :: df_nlargest_integer
+    public :: df_nsmallest_integer
 
     ! Abstract interface for row functions
     abstract interface
@@ -616,5 +622,110 @@ contains
             end select
         end do
     end subroutine reorder_all_columns
+
+    !========================================================================
+    ! NLARGEST / NSMALLEST FUNCTIONS
+    !========================================================================
+
+    !> Return dataframe with n largest values in a real column
+    !!
+    !! @param df The data frame
+    !! @param n Number of largest values to return
+    !! @param col_index Column index to sort by
+    !! @return New dataframe with n rows containing largest values
+    function df_nlargest_real(df, n, col_index) result(result_df)
+        type(data_frame), intent(in) :: df
+        integer, intent(in) :: n
+        integer, intent(in) :: col_index
+        type(data_frame) :: result_df
+
+        type(data_frame) :: sorted_df
+        integer :: n_rows
+
+        if (col_index < 1 .or. col_index > df%ncols()) error stop "column index out of range"
+        if (df%dtype(col_index) /= REAL_NUM) error stop "column is not real type"
+
+        ! Sort descending
+        sorted_df = df_copy(df)
+        call df_sort_by_column(sorted_df, col_index, .false.)
+
+        ! Take first n rows
+        n_rows = min(n, sorted_df%nrows())
+        result_df = df_slice_rows(sorted_df, 1, n_rows)
+
+        call sorted_df%destroy()
+    end function df_nlargest_real
+
+    !> Return dataframe with n smallest values in a real column
+    function df_nsmallest_real(df, n, col_index) result(result_df)
+        type(data_frame), intent(in) :: df
+        integer, intent(in) :: n
+        integer, intent(in) :: col_index
+        type(data_frame) :: result_df
+
+        type(data_frame) :: sorted_df
+        integer :: n_rows
+
+        if (col_index < 1 .or. col_index > df%ncols()) error stop "column index out of range"
+        if (df%dtype(col_index) /= REAL_NUM) error stop "column is not real type"
+
+        ! Sort ascending
+        sorted_df = df_copy(df)
+        call df_sort_by_column(sorted_df, col_index, .true.)
+
+        ! Take first n rows
+        n_rows = min(n, sorted_df%nrows())
+        result_df = df_slice_rows(sorted_df, 1, n_rows)
+
+        call sorted_df%destroy()
+    end function df_nsmallest_real
+
+    !> Return dataframe with n largest values in an integer column
+    function df_nlargest_integer(df, n, col_index) result(result_df)
+        type(data_frame), intent(in) :: df
+        integer, intent(in) :: n
+        integer, intent(in) :: col_index
+        type(data_frame) :: result_df
+
+        type(data_frame) :: sorted_df
+        integer :: n_rows
+
+        if (col_index < 1 .or. col_index > df%ncols()) error stop "column index out of range"
+        if (df%dtype(col_index) /= INTEGER_NUM) error stop "column is not integer type"
+
+        ! Sort descending
+        sorted_df = df_copy(df)
+        call df_sort_by_column(sorted_df, col_index, .false.)
+
+        ! Take first n rows
+        n_rows = min(n, sorted_df%nrows())
+        result_df = df_slice_rows(sorted_df, 1, n_rows)
+
+        call sorted_df%destroy()
+    end function df_nlargest_integer
+
+    !> Return dataframe with n smallest values in an integer column
+    function df_nsmallest_integer(df, n, col_index) result(result_df)
+        type(data_frame), intent(in) :: df
+        integer, intent(in) :: n
+        integer, intent(in) :: col_index
+        type(data_frame) :: result_df
+
+        type(data_frame) :: sorted_df
+        integer :: n_rows
+
+        if (col_index < 1 .or. col_index > df%ncols()) error stop "column index out of range"
+        if (df%dtype(col_index) /= INTEGER_NUM) error stop "column is not integer type"
+
+        ! Sort ascending
+        sorted_df = df_copy(df)
+        call df_sort_by_column(sorted_df, col_index, .true.)
+
+        ! Take first n rows
+        n_rows = min(n, sorted_df%nrows())
+        result_df = df_slice_rows(sorted_df, 1, n_rows)
+
+        call sorted_df%destroy()
+    end function df_nsmallest_integer
 
 end module datafort_utilities

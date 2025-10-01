@@ -77,6 +77,10 @@ module datafort_statistics
     ! Public summary functions
     public :: df_describe_numeric
 
+    ! Public shape/distribution functions
+    public :: df_skewness_real, df_skewness_integer
+    public :: df_kurtosis_real, df_kurtosis_integer
+
 contains
 
     !========================================================================
@@ -591,5 +595,190 @@ contains
 
         write (out_unit, '(a)') repeat('=', 80)
     end subroutine df_describe_numeric
+
+    !========================================================================
+    ! SKEWNESS FUNCTIONS
+    !========================================================================
+
+    !> Calculate skewness (measure of asymmetry) of real column
+    !!
+    !! Skewness measures the asymmetry of the distribution:
+    !! - skewness = 0: symmetric distribution
+    !! - skewness > 0: right-skewed (tail on the right)
+    !! - skewness < 0: left-skewed (tail on the left)
+    !!
+    !! Uses the sample skewness formula with bias correction (Fisher's moment coefficient)
+    function df_skewness_real(df, col_index) result(skew)
+        type(data_frame), intent(in) :: df
+        integer, intent(in) :: col_index
+        real(rk) :: skew
+
+        real(rk), dimension(:), allocatable :: col
+        type(column) :: data_col
+        real(rk) :: avg, std_dev, m3
+        integer :: n, i
+
+        if (col_index < 1 .or. col_index > df%ncols()) error stop "column index out of range"
+
+        data_col = df%get_data_col(col_index)
+        if (data_col%get_type() /= REAL_NUM) error stop "column is not real type"
+
+        col = data_col%getr()
+        n = size(col)
+
+        if (n < 3) then
+            skew = 0.0_rk
+            return
+        end if
+
+        ! Calculate mean and standard deviation
+        avg = sum(col) / real(n, rk)
+        std_dev = sqrt(sum((col - avg)**2) / real(n - 1, rk))
+
+        if (std_dev < epsilon(1.0_rk)) then
+            skew = 0.0_rk
+            return
+        end if
+
+        ! Calculate third moment
+        m3 = sum(((col - avg) / std_dev)**3) / real(n, rk)
+
+        ! Apply bias correction
+        skew = m3 * sqrt(real(n * (n - 1), rk)) / real(n - 2, rk)
+    end function df_skewness_real
+
+    !> Calculate skewness of integer column
+    function df_skewness_integer(df, col_index) result(skew)
+        type(data_frame), intent(in) :: df
+        integer, intent(in) :: col_index
+        real(rk) :: skew
+
+        integer(ik), dimension(:), allocatable :: col
+        type(column) :: data_col
+        real(rk) :: avg, std_dev, m3
+        integer :: n, i
+
+        if (col_index < 1 .or. col_index > df%ncols()) error stop "column index out of range"
+
+        data_col = df%get_data_col(col_index)
+        if (data_col%get_type() /= INTEGER_NUM) error stop "column is not integer type"
+
+        col = data_col%geti()
+        n = size(col)
+
+        if (n < 3) then
+            skew = 0.0_rk
+            return
+        end if
+
+        ! Calculate mean and standard deviation
+        avg = sum(real(col, rk)) / real(n, rk)
+        std_dev = sqrt(sum((real(col, rk) - avg)**2) / real(n - 1, rk))
+
+        if (std_dev < epsilon(1.0_rk)) then
+            skew = 0.0_rk
+            return
+        end if
+
+        ! Calculate third moment
+        m3 = sum(((real(col, rk) - avg) / std_dev)**3) / real(n, rk)
+
+        ! Apply bias correction
+        skew = m3 * sqrt(real(n * (n - 1), rk)) / real(n - 2, rk)
+    end function df_skewness_integer
+
+    !========================================================================
+    ! KURTOSIS FUNCTIONS
+    !========================================================================
+
+    !> Calculate kurtosis (measure of tailedness) of real column
+    !!
+    !! Kurtosis measures the "tailedness" of the distribution:
+    !! - kurtosis = 3: normal distribution (mesokurtic)
+    !! - kurtosis > 3: heavy tails (leptokurtic)
+    !! - kurtosis < 3: light tails (platykurtic)
+    !!
+    !! Returns excess kurtosis (kurtosis - 3) for easier interpretation
+    !! Uses the sample kurtosis formula with bias correction
+    function df_kurtosis_real(df, col_index) result(kurt)
+        type(data_frame), intent(in) :: df
+        integer, intent(in) :: col_index
+        real(rk) :: kurt
+
+        real(rk), dimension(:), allocatable :: col
+        type(column) :: data_col
+        real(rk) :: avg, std_dev, m4
+        integer :: n, i
+
+        if (col_index < 1 .or. col_index > df%ncols()) error stop "column index out of range"
+
+        data_col = df%get_data_col(col_index)
+        if (data_col%get_type() /= REAL_NUM) error stop "column is not real type"
+
+        col = data_col%getr()
+        n = size(col)
+
+        if (n < 4) then
+            kurt = 0.0_rk
+            return
+        end if
+
+        ! Calculate mean and standard deviation
+        avg = sum(col) / real(n, rk)
+        std_dev = sqrt(sum((col - avg)**2) / real(n - 1, rk))
+
+        if (std_dev < epsilon(1.0_rk)) then
+            kurt = 0.0_rk
+            return
+        end if
+
+        ! Calculate fourth moment
+        m4 = sum(((col - avg) / std_dev)**4) / real(n, rk)
+
+        ! Apply bias correction and return excess kurtosis
+        kurt = (real(n * (n + 1), rk) * m4 - 3.0_rk * real((n - 1)**2, rk)) / &
+               real((n - 2) * (n - 3), rk)
+    end function df_kurtosis_real
+
+    !> Calculate kurtosis of integer column
+    function df_kurtosis_integer(df, col_index) result(kurt)
+        type(data_frame), intent(in) :: df
+        integer, intent(in) :: col_index
+        real(rk) :: kurt
+
+        integer(ik), dimension(:), allocatable :: col
+        type(column) :: data_col
+        real(rk) :: avg, std_dev, m4
+        integer :: n, i
+
+        if (col_index < 1 .or. col_index > df%ncols()) error stop "column index out of range"
+
+        data_col = df%get_data_col(col_index)
+        if (data_col%get_type() /= INTEGER_NUM) error stop "column is not integer type"
+
+        col = data_col%geti()
+        n = size(col)
+
+        if (n < 4) then
+            kurt = 0.0_rk
+            return
+        end if
+
+        ! Calculate mean and standard deviation
+        avg = sum(real(col, rk)) / real(n, rk)
+        std_dev = sqrt(sum((real(col, rk) - avg)**2) / real(n - 1, rk))
+
+        if (std_dev < epsilon(1.0_rk)) then
+            kurt = 0.0_rk
+            return
+        end if
+
+        ! Calculate fourth moment
+        m4 = sum(((real(col, rk) - avg) / std_dev)**4) / real(n, rk)
+
+        ! Apply bias correction and return excess kurtosis
+        kurt = (real(n * (n + 1), rk) * m4 - 3.0_rk * real((n - 1)**2, rk)) / &
+               real((n - 2) * (n - 3), rk)
+    end function df_kurtosis_integer
 
 end module datafort_statistics
